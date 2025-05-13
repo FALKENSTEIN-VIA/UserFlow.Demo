@@ -1,0 +1,2 @@
+Erstellen einer Migration mit DesignTimeDbContextFactory
+	migration-add InitialCreate --context AppDbContext

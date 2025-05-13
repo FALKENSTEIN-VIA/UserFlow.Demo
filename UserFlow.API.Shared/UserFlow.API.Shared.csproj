@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- ░░░░░ Sprachressourcen ░░░░░ -->
+	<PropertyGroup>
+		<SatelliteResourceLanguages>de;en</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<!-- ░░░░░ Zielplattform und Compiler-Optionen ░░░░░ -->
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<!-- ░░░░░ NuGet-Abhängigkeiten für Client-Code ░░░░░ -->
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="CsvHelper" Version="33.0.1" />
+	</ItemGroup>
+
+</Project>

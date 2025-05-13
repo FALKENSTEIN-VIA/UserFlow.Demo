@@ -1,0 +1,28 @@
+{
+  "profiles": {
+    "UserFlow.API": {
+      "commandName": "Project", // 🚀 Startet die API als Konsolenanwendung
+      "dotnetRunMessages": true, // 📣 Zeigt ausführliche Run-Messages von dotnet
+      "applicationUrl": "http://localhost:61681;https://localhost:71681", // 🌐 URLs für HTTP und HTTPS Endpunkte
+      "launchBrowser": true, // 🌍 Öffnet Browser automatisch bei Start
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development" // 🛠️ Setzt Umgebungsvariable für Konfiguration
+      }
+    }
+  }
+}
+
+/// *****************************************************************************************
+// @file launchSettings.json
+// @author Claus Falkenstein
+// @company VIA Software GmbH
+// @date 2025-04-27
+// @brief Defines the local development profile for launching the API project.
+// *****************************************************************************************
+// @remarks 📄 Developer Notes:
+// - Used only by Visual Studio or CLI (`dotnet run`) for local development.
+// - Defines ports and browser launch behavior.
+// - The environment is set to `Development` to load appsettings.Development.json.
+// - Make sure ports don't conflict with other running applications.
+// - You can add other profiles (e.g. "Staging") for advanced scenarios.
+// *****************************************************************************************

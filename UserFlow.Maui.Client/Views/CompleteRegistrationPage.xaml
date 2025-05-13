@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    *****************************************************************************************
+    @file CompleteRegistrationPage.xaml
+    @brief MAUI ContentPage for completing registration by setting a password.
+    @author Claus Falkenstein
+    @company VIA Software GmbH
+    @date 2025-04-27
+    @remarks 📄 Bound to CompleteRegistrationViewModel to collect password from user.
+    *****************************************************************************************
+-->
+
+<ContentPage
+    x:Class="UserFlow.Maui.Client.Views.CompleteRegistrationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:UserFlow.Maui.Client.ViewModels"
+    Title="Passwort setzen"
+    x:DataType="viewmodel:CompleteRegistrationViewModel">
+
+    <!--  🔲 Layout container with padding and spacing  -->
+    <VerticalStackLayout Padding="20" Spacing="16">
+
+        <!--  📧 Email label and input  -->
+        <Label Text="E-Mail" />
+        <Entry Keyboard="Email" Text="{Binding Email}" />
+
+        <!--  🔐 Password label and secure input  -->
+        <Label Text="Neues Passwort" />
+        <Entry IsPassword="True" Text="{Binding Password}" />
+
+        <!--  ✅ Submit button to trigger registration  -->
+        <Button Command="{Binding CompleteRegistrationCommand}" Text="Registrierung abschließen" />
+    </VerticalStackLayout>
+</ContentPage>

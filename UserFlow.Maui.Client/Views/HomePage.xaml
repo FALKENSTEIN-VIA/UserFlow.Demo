@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    *****************************************************************************************
+    @file HomePage.xaml
+    @brief Main landing page after login, providing logout and project navigation actions.
+    @author Claus Falkenstein
+    @company VIA Software GmbH
+    @date 2025-04-27
+    @remarks 🏠 This page serves as the user's personal homepage in the MAUI app.
+    *****************************************************************************************
+-->
+
+<controls:CustomPage
+    x:Class="UserFlow.Maui.Client.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:UserFlow.Maui.Client.UserControls"
+    xmlns:viewmodels="clr-namespace:UserFlow.Maui.Client.ViewModels"
+    Title="Home Page"
+    x:DataType="viewmodels:HomeViewModel"
+    IsBackButtonVisible="False"
+    IsNavBarVisible="True"
+    NavigationPage.HasBackButton="False"
+    NavigationPage.HasNavigationBar="False">
+
+    <!--
+        🧭 Layout container for action buttons, with top margin for spacing.
+    -->
+    <Grid ColumnDefinitions="150,*">
+
+        <!--  🔓 Logout button  -->
+        <Button
+            Grid.Column="1"
+            Margin="0,-36,5,0"
+            Background="{DynamicResource Danger}"
+            Command="{Binding LogoutCommand}"
+            FontAttributes="Bold"
+            HeightRequest="30"
+            HorizontalOptions="End"
+            Text="Logout"
+            TextColor="White"
+            VerticalOptions="Start"
+            WidthRequest="75" />
+
+        <!--  👉 Navigation button – leads to the user's list of projects.  -->
+        <Border Background="{DynamicResource NavHeader}" StrokeThickness="0">
+            <VerticalStackLayout Padding="5" Spacing="5">
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Style" Value="{StaticResource NavButtonStyle}" />
+                    </Style>
+                </VerticalStackLayout.Resources>
+                <Button Command="{Binding NavigateCompaniesCommand}" Text="Companies" />
+                <Button Command="{Binding NavigateUsersCommand}" Text="Users" />
+                <Button Command="{Binding NavigateProjectsCommand}" Text="Projects" />
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+</controls:CustomPage>

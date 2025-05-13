@@ -1,0 +1,56 @@
+📝 UserFlow Entwickler-Merkzettel (Stand: 2025-05-02)
+==========================================================================
+
+📁 Projektstruktur
+------------------
+- API-Projekt: `UserFlow.API`
+- Client-Projekt (Testclient): `UserFlow.Client.WPF`
+- Gemeinsame Library: `UserFlow.Shared`
+- Serilog-Logging über `appsettings.json` + Program.cs aktiviert
+- Datenbank: PostgreSQL (Port 5432), EF Core 9, SoftDelete + MultiTenancy per UserId
+- Admin-Nutzer hat UserId == 1 (Bypass-Logik aktiv)
+
+🧩 Aktueller Funktionsumfang
+-----------------------------
+✅ Registrierung + Login (Admin-gesteuert über Seed-Logik)
+✅ Benutzerverwaltung mit Soft Delete + QueryFilter
+✅ Projekt-, Screen-, ScreenAction- und Notizverwaltung
+✅ Navigation im WPF-Client
+✅ Logging via Serilog (File + Konsole)
+✅ Exception-Handling über globale Middleware
+✅ Logging-Symbole definiert über eigene Mapping-Datei
+✅ AppDbContext aktualisiert mit Auditing (CreatedAt, UpdatedAt, CreatedBy, ModifiedBy)
+
+🚧 Geplante Erweiterungen (neuer Chat)
+--------------------------------------
+🔹 SoftDelete Recovery (Undo-Delete mit z. B. `IsDeleted = false`)
+🔹 Admin-Dashboard-Endpunkte (z. B. Benutzer je Firma, Auslastung, etc.)
+🔹 SignalR-Echtzeitaktualisierung
+🔹 Unterstützung für Mehrsprachigkeit ("Multikulti")
+🔹 Unternehmensregistrierung mit Einladungscode (optional)
+🔹 Erweiterte Rechteverwaltung (z. B. Firmen-Admin)
+
+❗ Hinweise zur Technik / Konventionen
+--------------------------------------
+- Alle IDs sind `long`, keine `Guid`, keine `int`
+- SoftDelete: `IsDeleted` in `BaseEntity`, QueryFilter in `AppDbContext`
+- MultiTenancy: Filterung über `UserId`, Admins sehen alle Daten
+- Navigation Properties konsistent eingebaut (→ keine Shadow Properties mehr!)
+- DTOs im Namespace `UserFlow.Shared.DTO`, immer mit Suffix `DTO`
+- Logging erfolgt automatisch, manuelles Logging nur bei Bedarf (z. B. Controller Catch-Block)
+- Logging-Symbole (🔹, ⚠️, ❌ etc.) sind erlaubt, siehe: `LogSymbols.cs`
+
+🛠️ Tools & Libraries
+---------------------
+- Serilog (inkl. Serilog.Settings.Configuration, Serilog.Sinks.File)
+- CommunityToolkit.Mvvm
+- EF Core 9 + Npgsql
+- Swashbuckle (Swagger)
+- BCrypt.Net
+
+📌 Offene ToDos / Empfehlungen
+-------------------------------
+- SoftDelete-Recovery vorbereiten
+- SignalR-Konzept entwerfen (welche Entities triggern Updates?)
+- Mehrsprachigkeitskonzept abstimmen (Resource-Dateien? Datenbankgestützt?)
+- Admin-UI im WPF-Client (z. B. Benutzerübersicht, Firmenverwaltung)

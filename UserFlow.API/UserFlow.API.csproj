@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<!-- ░░░░░ Sprachressourcen ░░░░░ -->
+	<PropertyGroup>
+		<SatelliteResourceLanguages>de;en</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<!-- ░░░░░ Build-Konfigurationen ░░░░░ -->
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);TEST</DefineConstants>
+		<!--<DefineConstants>$(DefineConstants);ENABLE_SWAGGER</DefineConstants>-->
+	</PropertyGroup>
+
+	<!-- ░░░░░ Zielplattform und Compiler-Optionen ░░░░░ -->
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Scripts\Triggers\ChangeStreamsTriggers.sql" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Scripts\Triggers\ChangeStreamsTriggers.sql">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<!-- ░░░░░ NuGet-Abhängigkeiten ░░░░░ -->
+	<ItemGroup>
+		<!-- Entity Framework Core & Datenzugriff -->
+		<PackageReference Include="AspNetCore.SwaggerUI.Themes" Version="2.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.4" />
+		<PackageReference Include="Npgsql" Version="9.0.3" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+
+		<!-- ASP.NET Core & Authentifizierung -->
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
+
+		<!-- Hilfsbibliotheken & Tools -->
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+		<PackageReference Include="CsvHelper" Version="33.0.1" />
+		<PackageReference Include="Bogus" Version="35.6.3" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
+		<PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.4" />
+
+		<!-- Logging mit Serilog -->
+		<PackageReference Include="Serilog" Version="4.2.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+
+		<!-- Swagger / OpenAPI -->
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+		
+	</ItemGroup>
+
+	<!-- ░░░░░ Projektreferenz auf Shared-Library ░░░░░ -->
+	<ItemGroup>
+	  <ProjectReference Include="..\UserFlow.API.ChangeStreams\UserFlow.API.ChangeStreams.csproj" />
+	  <ProjectReference Include="..\UserFlow.API.Shared\UserFlow.API.Shared.csproj" />
+	</ItemGroup>
+
+
+	<!-- ░░░░░ AppSettings-Konfiguration ░░░░░ -->
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

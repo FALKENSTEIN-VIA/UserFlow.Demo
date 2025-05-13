@@ -1,0 +1,94 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36017.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.API", "UserFlow.API\UserFlow.API.csproj", "{A3EE94A3-7B1F-1CEB-85D6-B755BAD455AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API DOCUMENTATION", "API DOCUMENTATION", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Emojis", "Emojis", "{B94E6B10-CE9B-4FF9-887C-29B021EE5D42}"
+	ProjectSection(SolutionItems) = preProject
+		Emoji.md = Emoji.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenAI Developer Notes", "OpenAI Developer Notes", "{4B6D8549-0A88-4C1E-A068-98285377ACF9}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Merkzettel ChatGPT\UserFlow.Merkzettel.2025-05-01 - Basis Funktionalität.txt = Documentation\Merkzettel ChatGPT\UserFlow.Merkzettel.2025-05-01 - Basis Funktionalität.txt
+		Documentation\Merkzettel ChatGPT\UserFlow.Merkzettel.2025-05-02 - Logging und DashBoard.txt = Documentation\Merkzettel ChatGPT\UserFlow.Merkzettel.2025-05-02 - Logging und DashBoard.txt
+		Documentation\Merkzettel ChatGPT\UserFlow_Merkzettel_2025-05-03 - Controller Erweiterung.txt = Documentation\Merkzettel ChatGPT\UserFlow_Merkzettel_2025-05-03 - Controller Erweiterung.txt
+		Documentation\Merkzettel ChatGPT\UserFlow_Merkzettel_2025-05-03B - SignalR ChangeStreams.txt = Documentation\Merkzettel ChatGPT\UserFlow_Merkzettel_2025-05-03B - SignalR ChangeStreams.txt
+		Documentation\Merkzettel ChatGPT\UserFlow_Merkzettel_2025-05-13 - SignalR ChangeStreams.txt = Documentation\Merkzettel ChatGPT\UserFlow_Merkzettel_2025-05-13 - SignalR ChangeStreams.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.API.Shared", "UserFlow.API.Shared\UserFlow.API.Shared.csproj", "{EA3DC8B8-E8A6-3343-45D1-A9129B59A21A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.Maui.Client", "UserFlow.Maui.Client\UserFlow.Maui.Client.csproj", "{50961413-603C-2B1B-161C-B617D940284A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScreenShots Information", "ScreenShots Information", "{D28A4829-6DC3-45A1-9A06-03645D2DEE28}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Screenshots\Classes of UserFlow API.png = Documentation\Screenshots\Classes of UserFlow API.png
+		Documentation\Screenshots\Controller Zugriffskontrolle.png = Documentation\Screenshots\Controller Zugriffskontrolle.png
+		Documentation\Screenshots\LoginEmployee.png = Documentation\Screenshots\LoginEmployee.png
+		Documentation\Screenshots\SignalR ChangesStreams.png = Documentation\Screenshots\SignalR ChangesStreams.png
+		Documentation\Screenshots\UserFlow Backend.png = Documentation\Screenshots\UserFlow Backend.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{625DCB58-0EF2-449C-AFFB-5E6EDE30C690}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Documents\UserFlow API Features - Aktueller Stand 2025-05-04.docx = Documentation\Documents\UserFlow API Features - Aktueller Stand 2025-05-04.docx
+		ViewModel Template ohne ChangeStreams.txt = ViewModel Template ohne ChangeStreams.txt
+		..\..\..\..\Temp\ViewModel Template für ChangeStreams.txt = ..\..\..\..\Temp\ViewModel Template für ChangeStreams.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.API.Http", "UserFlow.API.HTTP\UserFlow.API.Http.csproj", "{507A4ACD-3994-2822-AF8B-DAE297F721AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database Triggers", "Database Triggers", "{2ECC4E2D-63E2-4D8E-A8D7-BE45D0AA6DF8}"
+	ProjectSection(SolutionItems) = preProject
+		Database Triggers.txt = Database Triggers.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.API.ChangeStreams", "UserFlow.API.ChangeStreams\UserFlow.API.ChangeStreams.csproj", "{F12B0177-8D04-2070-4418-1044E8EC4B02}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3EE94A3-7B1F-1CEB-85D6-B755BAD455AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3EE94A3-7B1F-1CEB-85D6-B755BAD455AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3EE94A3-7B1F-1CEB-85D6-B755BAD455AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3EE94A3-7B1F-1CEB-85D6-B755BAD455AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA3DC8B8-E8A6-3343-45D1-A9129B59A21A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA3DC8B8-E8A6-3343-45D1-A9129B59A21A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA3DC8B8-E8A6-3343-45D1-A9129B59A21A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA3DC8B8-E8A6-3343-45D1-A9129B59A21A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50961413-603C-2B1B-161C-B617D940284A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50961413-603C-2B1B-161C-B617D940284A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50961413-603C-2B1B-161C-B617D940284A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{50961413-603C-2B1B-161C-B617D940284A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50961413-603C-2B1B-161C-B617D940284A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{507A4ACD-3994-2822-AF8B-DAE297F721AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{507A4ACD-3994-2822-AF8B-DAE297F721AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{507A4ACD-3994-2822-AF8B-DAE297F721AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{507A4ACD-3994-2822-AF8B-DAE297F721AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F12B0177-8D04-2070-4418-1044E8EC4B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F12B0177-8D04-2070-4418-1044E8EC4B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F12B0177-8D04-2070-4418-1044E8EC4B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F12B0177-8D04-2070-4418-1044E8EC4B02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B94E6B10-CE9B-4FF9-887C-29B021EE5D42} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4B6D8549-0A88-4C1E-A068-98285377ACF9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D28A4829-6DC3-45A1-9A06-03645D2DEE28} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{625DCB58-0EF2-449C-AFFB-5E6EDE30C690} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{2ECC4E2D-63E2-4D8E-A8D7-BE45D0AA6DF8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {029CC74B-A008-4F83-812B-E61D4312A11C}
+	EndGlobalSection
+EndGlobal

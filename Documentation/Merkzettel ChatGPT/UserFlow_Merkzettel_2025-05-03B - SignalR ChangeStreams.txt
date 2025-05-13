@@ -1,0 +1,48 @@
+Entwickler-Merkzettel – Stand: 2025-05-03
+Projekt: UserFlowAPI – ChangeStreams via SignalR (nächster Schritt)
+✅ Aktueller Stand der API
+
+    Framework: .NET 8, ASP.NET Core WebAPI
+
+    Datenbank: PostgreSQL via EF Core
+
+    Multi-Tenancy: Vollständig umgesetzt über CompanyId in allen Entitäten
+
+    Rollen & Zugriff: GlobalAdmin, Admin, Manager, User
+
+    Authentication: JWT + RefreshToken, Identity-basierend
+
+    DTOs & Mappings: Vollständig über DTOMapper, inkl. LINQ-Expressions
+
+    Soft Delete: Global aktiviert über BaseEntity.IsDeleted
+
+    Audit-Trail: CreatedAt, UpdatedAt, CreatedBy, UpdatedBy
+
+    Serilog Logging: Inklusive Hoststart, Migrationsstatus, Seeding
+
+    Seeder: Erstellt 10 Firmen mit vollständiger Struktur (Admin, Manager, User, Projekte, Screens, Actions, Notes)
+
+    Swagger: Integriert mit API-Dokumentation
+
+    Admin-Endpoints: Dashboard mit Statistiken (User- und Projektanzahl, neueste Benutzer)
+
+    Mehrsprachigkeit: Geplant via .resx, vorbereitet in multilingual-api-support.md
+
+    Export/Import-Funktion: Als Feature geplant, siehe feature-export-import.md
+
+📌 Nächster Entwicklungsschritt: SignalR ChangeStreams
+
+Ziel:
+Live-Aktualisierung von UI-Clients (z. B. WPF oder MAUI) bei Änderungen an Projekten, Screens, Aktionen oder Notizen durch andere Benutzer.
+
+Geplante Umsetzung:
+
+    Einrichtung eines SignalR-Hubs
+
+    Broadcasting bei Create/Update/Delete in relevanten Controllern
+
+    Authentifizierte Verbindung mit Zugriffskontrolle über CompanyId
+
+    Strukturierung der Payloads: z. B. ActionType = Created, EntityType = Project, Data = ...
+
+    Spätere Erweiterung: Änderungsverlauf oder delta-basierte Updates

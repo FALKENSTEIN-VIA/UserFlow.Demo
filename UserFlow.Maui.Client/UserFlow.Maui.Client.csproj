@@ -1,0 +1,225 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+	<!--░░░░░ Allgemeine Projektkonfiguration ░░░░░--> 
+	<PropertyGroup>
+		<TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
+		<!--<WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>-->
+
+		<!--<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041.0</TargetFrameworks>-->
+		<OutputType>WinExe</OutputType>
+		<RootNamespace>UserFlow.Maui.Client</RootNamespace>
+		<LangVersion>preview</LangVersion>
+		<SingleProject>true</SingleProject>
+		<WindowsPackageType>None</WindowsPackageType>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>		
+		<UseMaui>true</UseMaui>
+		<UseWinUI>true</UseWinUI>
+	</PropertyGroup>
+
+	 <!--░░░░░ App-Metadaten ░░░░░--> 
+	<PropertyGroup>
+		<ApplicationTitle>UserFlow.Client</ApplicationTitle>
+		<ApplicationId>com.via.UserFlow.Client</ApplicationId>
+		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	 <!--░░░░░ Plattformanforderungen ░░░░░--> 
+	<PropertyGroup>
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net9.0-ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net9.0-android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net9.0-windows10.0.19041.0'">10.0.19041.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+	 <!--░░░░░ Lokalisierung ░░░░░--> 
+	<PropertyGroup>
+		<SatelliteResourceLanguages>de;en</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	 <!--░░░░░ Ressourcen ░░░░░--> 
+	<ItemGroup>
+		<MauiFont Include="Resources\Fonts\*.ttf" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiImage Include="Resources\Images\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	 <!--░░░░░ Konfigurationsdatei ░░░░░--> 
+	<ItemGroup>
+		<EmbeddedResource Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	 <!--░░░░░ NuGet-Abhängigkeiten ░░░░░--> 
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.10" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0-preview.3.25172.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+		<PackageReference Include="Serilog" Version="4.2.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
+	</ItemGroup>
+
+	 <!--░░░░░ Projektverweise ░░░░░--> 
+	<ItemGroup>
+		<ProjectReference Include="..\UserFlow.API.ChangeStreams\UserFlow.API.ChangeStreams.csproj" />
+		<ProjectReference Include="..\UserFlow.API.HTTP\UserFlow.API.Http.csproj" />
+	</ItemGroup> 
+	<ItemGroup>
+	  <MauiXaml Update="Views\CompaniesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
+	 <!--░░░░░ Entferne ungenutzte Sprachordner ░░░░░--> 
+	<Target Name="RemoveUnusedCultures" AfterTargets="AfterBuild">
+		<ItemGroup>
+			<UnwantedCultureFolders Include="&#xA;          $(OutputPath)\cs;&#xA;          $(OutputPath)\es;&#xA;          $(OutputPath)\fr;&#xA;          $(OutputPath)\ja;&#xA;          $(OutputPath)\ru;&#xA;          $(OutputPath)\zh-*;" />
+		</ItemGroup>
+		<RemoveDir Directories="@(UnwantedCultureFolders)" />
+	</Target>
+
+</Project>
+
+
+
+<!--<Project Sdk="Microsoft.NET.Sdk">
+
+	--><!--░░░░░ Allgemeine Projektkonfiguration ░░░░░--><!--
+	<PropertyGroup>
+		<TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
+		<WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
+		<OutputType>WinExe</OutputType>
+		<RootNamespace>UserFlow.Maui.Client</RootNamespace>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	--><!--░░░░░ MAUI-spezifische Einstellungen ░░░░░--><!--
+	<PropertyGroup>
+		<UseWinUI>true</UseWinUI>
+		<SingleProject>true</SingleProject>
+		<WindowsPackageType>None</WindowsPackageType>
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+	</PropertyGroup>
+
+	--><!--░░░░░ XAML-Kompilierung ░░░░░--><!--
+	<ItemGroup>
+		<MauiXaml Update="UserControls\CustomPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="UserControls\EmptyViewPresenter.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\CompleteRegistrationPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\LoadingPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\UsersPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+	</ItemGroup>
+
+	--><!--░░░░░ App-Metadaten ░░░░░--><!--
+	<PropertyGroup>
+		<ApplicationTitle>UserFlow.Client</ApplicationTitle>
+		<ApplicationId>com.via.UserFlow.Client</ApplicationId>
+		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	--><!--░░░░░ Plattformanforderungen ░░░░░--><!--
+	<PropertyGroup>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+
+	--><!--░░░░░ Lokalisierung ░░░░░--><!--
+	<PropertyGroup>
+		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	--><!--░░░░░ Fonts ░░░░░--><!--
+	<ItemGroup>
+		<MauiFont Update="Resources\Fonts\OpenSans-Regular.ttf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</MauiFont>
+		<MauiFont Update="Resources\Fonts\OpenSans-Semibold.ttf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</MauiFont>
+		<MauiFont Update="Resources\Fonts\apercumovistarbold.ttf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</MauiFont>
+	</ItemGroup>
+
+	--><!--░░░░░ Ressourcen ░░░░░--><!--
+	<ItemGroup>
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+		<MauiFont Include="Resources\Fonts\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	--><!--░░░░░ Konfigurationsdatei ░░░░░--><!--
+	<ItemGroup>
+		<EmbeddedResource Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	--><!--░░░░░ NuGet-Abhängigkeiten ░░░░░--><!--
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0-preview.3.25172.1" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+		<PackageReference Include="Serilog" Version="4.2.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\UserFlow.API.HTTP\UserFlow.API.Http.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="UserControls\EmptyViewPresenter.xaml.cs">
+			<DependentUpon>EmptyViewPresenter.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\CreateUserPage.xaml.cs">
+			<DependentUpon>CreateUserPage.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	--><!--░░░░░ Entferne ungenutzte Sprachordner ░░░░░--><!--
+	<Target Name="RemoveUnusedCultures" AfterTargets="AfterBuild">
+		<ItemGroup>
+			<UnwantedCultureFolders Include="&#xA;        $(OutputPath)\cs;&#xA;        $(OutputPath)\es;&#xA;        $(OutputPath)\fr;&#xA;        $(OutputPath)\ja;&#xA;        $(OutputPath)\ru;&#xA;        $(OutputPath)\zh-*" />
+		</ItemGroup>
+		<RemoveDir Directories="@(UnwantedCultureFolders)" />
+	</Target>
+
+</Project>-->
+

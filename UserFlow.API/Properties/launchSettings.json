@@ -1,0 +1,33 @@
+/// @file launchSettings.json
+/// @author Claus Falkenstein
+/// @date 2025-04-27
+/// @brief Local launch configuration for UserFlow API.
+/// @details
+/// Defines how the API is launched during development.
+/// Includes profile, environment, URLs, and browser behavior.
+
+{
+  "profiles": {
+    "Api": {
+      // 👉 Defines the profile name used for launching the API
+      "commandName": "Project",
+
+      // 🌐 Automatically open browser on launch (Swagger UI)
+      // TODO: Change to true when Swagger UI should be opened in the browser
+      "launchBrowser": false,
+
+      // 🧭 URL opened after application start (Swagger UI endpoint)
+      //"launchUrl": "swagger",
+      "launchUrl": "swagger/index.html",
+
+      // 🌱 Environment-specific variables
+      "environmentVariables": {
+        // ✨ Specifies the environment the application will run in (Development, Staging, Production)
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+
+      // 🔉 Local URLs for HTTP and HTTPS – used for Kestrel server during development
+      "applicationUrl": "http://localhost:5000;https://localhost:5001"
+    }
+  }
+}

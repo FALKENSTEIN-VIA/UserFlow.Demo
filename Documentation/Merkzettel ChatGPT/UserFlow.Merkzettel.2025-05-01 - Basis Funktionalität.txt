@@ -1,0 +1,33 @@
+## Projekt: UserFlowAPI (Stand: 2025-04-28)
+
+- Entitäten:
+  - Tenant (ehemals User)
+  - Project
+  - Screen
+  - ScreenAction
+  - ScreenActionType
+  - Note
+  - Employee
+
+- DTOs:
+  - Für alle Entitäten: CreateDTO, UpdateDTO, DTO, PagedResult
+  - BulkDeleteRequest für Massenlöschungen
+
+- Infrastruktur:
+  - PostgreSQL, EF Core
+  - SoftDelete & Multi-Tenant-Support
+  - Auto-Migrate & Seeding
+  - DTOMapper (Entity ⇔ DTO)
+  - Swagger mit JWT-Authorization
+  - Exception Handling Middleware
+
+- Geplante Erweiterungen:
+  - Rename User → Tenant vollständig
+  - Automatische Audit-Felder (CreatedBy, UpdatedBy)
+  - Rollen- & Rechteverwaltung für Employees
+  - SignalR für Live-Updates
+  - MAUI Client (nur Windows)
+
+- Status Swagger:
+  - Funktioniert ✅ (https://localhost:61681/swagger)
+

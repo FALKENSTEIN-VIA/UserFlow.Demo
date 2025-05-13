@@ -1,0 +1,102 @@
+
+# 🧠 Entwickler-Merkzettel für das UserFlow-Projekt (Stand: 2025-05-03)
+
+## ✅ Allgemein
+- C# WebAPI-Projekt mit ASP.NET Core, Entity Framework Core, PostgreSQL, Identity, JWT + RefreshToken.
+- Vollständige Multi-Tenancy via `CompanyId` in allen relevanten Entities.
+- Soft Delete ist global aktiv via `IsDeleted` in `BaseEntity`.
+
+---
+
+## 🏢 Firmen (Company)
+- Die Entity `Company` erbt jetzt korrekt von `BaseEntity`.
+- Globale Query-Filter auch für `Company` aktiv.
+- DTOs: `CompanyDTO`, `CompanyCreateDTO`, `CompanyUpdateDTO`.
+- Mappings vorhanden über `DTOMapper`.
+
+---
+
+## 👤 Benutzer (User / Employee)
+- Identity-basiertes System mit `User : IdentityUser<long>`.
+- `Employee` verknüpft `UserId` und `CompanyId`, Rolle wird als `string` gespeichert.
+- `EmployeeConfiguration` definiert optionales FK-Verhalten wegen globaler Query-Filter.
+- DTOs: `EmployeeDTO`, `EmployeeUpdateDTO`.
+- Erweiterter `EmployeeController` mit folgenden Methoden:
+  - `GetAllAsync()` – Admin: alle, Manager: eigene Firma, User: 403
+  - `GetById(id)`
+  - `GetByCompany(companyId)`
+  - `Create(EmployeeDTO)`
+  - `Update(EmployeeUpdateDTO)`
+  - `Delete(id)`
+
+---
+
+## 🧱 Datenstruktur (Entities)
+- `Company` → `Employee` → `User`
+- `User` → `Project` → `Screen` → `ScreenAction`
+- `Screen`, `ScreenAction`, `Note` tragen `CompanyId`, `UserId`, ggf. `ProjectId`.
+
+---
+
+## 🧭 DTOMapper
+- Mappings für alle Entities zu DTOs (auch Expressions für LINQ).
+- Erweiterungen durchgeführt:
+  - `Company`-Objekte (nicht nur ID) optional in DTOs eingebaut.
+  - `Note` enthält `Title` (neu), zusätzlich Projekt- und Screen-Namen.
+  - Alle Screen- und ScreenActionDTOs enthalten `CompanyId`.
+
+---
+
+## 🌱 DataSeeder
+- Generiert:
+  - 10 Companies
+  - Für jede Company:
+    - 1 Admin (`admin.X@company.com`)
+    - 2 Manager
+    - 5 User
+  - Pro Benutzer: 15 Projekte mit Screens und Actions.
+- IDs konsistent vergeben:
+  - CompanyId beginnt bei 1
+  - Admin für CompanyId=1 hat `UserId = 2`
+- `SeedInitialDataForUserAsync()` berücksichtigt jetzt auch `CompanyId`.
+
+---
+
+## 🔐 Auth / JWT
+- `JwtService` erweitert: `CompanyId` wird jetzt im JWT als Claim eingebaut.
+- `ICurrentUserService` nutzt diesen Claim zur Identifizierung des eingeloggten Nutzers.
+
+---
+
+## 🛠️ AppDbContext
+- Globale Filter (nur `IsDeleted`, keine dynamischen Company-Filter).
+- Alle relevanten `EntityTypeConfiguration`-Klassen sind eingebunden:
+  - `ProjectConfiguration`
+  - `ScreenConfiguration`
+  - `ScreenActionConfiguration`
+  - `NoteConfiguration`
+  - `ScreenActionTypeConfiguration`
+  - `EmployeeConfiguration`
+  - `AppUserConfiguration`
+  - `CompanyConfiguration`
+
+---
+
+## 🧪 Test-Login (Admin, CompanyId = 1)
+- **E-Mail:** `admin.1@company.com`
+- **Passwort:** `Test123!`
+- Hat vollen Zugriff auf Projekte, Screens, Notes etc. seiner Firma.
+
+---
+
+## 🪵 Logging / Serilog
+- Startvorgänge, Migrationsstatus, Seeding-Abläufe, Rollenvergabe und Fehler werden mit `ILogger` in Logfile geschrieben.
+- Serilog-Ausgaben mit Templates wie: `🚀`, `🎉`, `⚠️`, `🔥`, etc.
+
+---
+
+## 📌 Sonstiges
+- Alle Queries mit `AsNoTracking()` im Controller.
+- Alle Navigation Properties konfiguriert (inkl. `ScreenAction → Project`, `Note → Screen`, ...).
+- Keine Shadow Properties mehr.
+- Migration ist aktuell, keine neue Migration erforderlich nach letztem Umbau.

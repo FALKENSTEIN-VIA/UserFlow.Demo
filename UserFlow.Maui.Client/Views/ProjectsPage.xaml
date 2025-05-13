@@ -1,0 +1,263 @@
+﻿<!--  ***************************************************************************************  -->
+<!--  @file ProjectsPage.xaml  -->
+<!--  @author Claus Falkenstein  -->
+<!--  @company VIA Software GmbH  -->
+<!--  @date 2025-04-27  -->
+<!--  @brief UI-Seite zur Anzeige der Projekte eines Benutzers.  -->
+<!--  Verwendet das ViewModel 'ProjectsViewModel' und bindet eine CollectionView.  -->
+<!--  ***************************************************************************************  -->
+
+<controls:CustomPage
+    x:Class="UserFlow.Maui.Client.Views.ProjectsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:UserFlow.Maui.Client.UserControls"
+    xmlns:dtos="clr-namespace:UserFlow.API.Shared.DTO;assembly=UserFlow.API.Shared"
+    xmlns:models="clr-namespace:UserFlow.API.Shared.DTO;assembly=UserFlow.API.Shared"
+    xmlns:viewmodels="clr-namespace:UserFlow.Maui.Client.ViewModels"
+    Title="Projects"
+    x:DataType="viewmodels:ProjectsViewModel"
+    IsBackButtonVisible="True"
+    IsNavBarVisible="True">
+
+
+    <!--#region  🧪 Bereich für Liste der Testnutzer (Admins, Managers + Users)-->
+    <Grid Background="{DynamicResource BackgroundDark}">
+        <!--  Margin="13,-1"  -->
+        <CollectionView
+            x:Name="TestUserCollectionView"
+            Grid.Row="1"
+            Margin="7,3"
+            ItemsSource="{Binding Projects}"
+            SelectedItem="{Binding CurrentProject, Mode=TwoWay}"
+            SelectionMode="Single"
+            VerticalScrollBarVisibility="Default">
+
+            <!--  Items Layout  -->
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="4" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <!--  Items Template  -->
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:ProjectDTO">
+                    <!--  Wrapper ContentView für VisualStateManager  -->
+                    <ContentView x:Name="RootView">
+                        <Grid>
+                            <!--  Haupt-Border mit Stroke  -->
+                            <Border
+                                x:Name="part_ItemPanel"
+                                Background="{DynamicResource Card}"
+                                StrokeShape="RoundRectangle 5"
+                                StrokeThickness="1.5">
+                                <!--  Grid-Aufbau mit Header + Details  -->
+                                <Grid RowDefinitions="Auto,*">
+                                    <!--  Header-Bereich  -->
+                                    <Border Background="{DynamicResource CardHeader}" StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="3,3,0,0" />
+                                        </Border.StrokeShape>
+                                        <Grid
+                                            Grid.Row="1"
+                                            Margin="12,6,5,7"
+                                            ColumnDefinitions="120,*,Auto"
+                                            RowDefinitions="Auto,Auto"
+                                            VerticalOptions="Center">
+                                            <HorizontalStackLayout>
+                                                <Label Text="Project Id" VerticalOptions="Center" />
+                                                <Label
+                                                    Grid.Column="1"
+                                                    Margin="5,0,0,0"
+                                                    Text="{Binding Id}"
+                                                    VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Name}"
+                                                VerticalOptions="Center" />
+                                            <!--  User Role  -->
+                                            <Border
+                                                Grid.RowSpan="2"
+                                                Grid.Column="3"
+                                                Margin="0,0,5,0"
+                                                Padding="10,5,10,6"
+                                                Background="{DynamicResource PrimaryDark}"
+                                                HeightRequest="30"
+                                                Stroke="#40000000"
+                                                StrokeShape="RoundRectangle 50"
+                                                StrokeThickness="1">
+                                                <Border.Triggers>
+                                                    <DataTrigger
+                                                        Binding="{Binding IsShared}"
+                                                        TargetType="Border"
+                                                        Value="False">
+                                                        <Setter Property="IsVisible" Value="False" />
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                                <Label
+                                                    FontSize="12"
+                                                    Text="Is shared"
+                                                    TextColor="White"
+                                                    VerticalOptions="Center" />
+                                            </Border>
+                                            <Label
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Opacity="0.8"
+                                                Text="{Binding Description}"
+                                                VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+
+                                    <!--  Detail-Content  -->
+                                    <Grid
+                                        Grid.Row="1"
+                                        Margin="12,8,5,10"
+                                        ColumnDefinitions="120,*"
+                                        RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <Label
+                                            Opacity="0.65"
+                                            Text="User Id:"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding UserId}"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Opacity="0.65"
+                                            Text="User Name:"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="{Binding UserName}"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Row="2"
+                                            Opacity="0.65"
+                                            Text="Company:"
+                                            VerticalOptions="Center" />
+                                        <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
+                                            <Label Text="Id" VerticalOptions="Center" />
+                                            <Label
+                                                Margin="2,0,0,0"
+                                                Text="{Binding CompanyId}"
+                                                VerticalOptions="Center" />
+                                            <Label Text=":" VerticalOptions="Center" />
+                                            <Label
+                                                Margin="8,0,0,0"
+                                                Text="{Binding CompanyName}"
+                                                VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                        <Label
+                                            Grid.Row="3"
+                                            Opacity="0.65"
+                                            Text="Is Shared"
+                                            VerticalOptions="Center" />
+                                        <Switch
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            Margin="-16,-5,0,2"
+                                            InputTransparent="True"
+                                            IsToggled="{Binding IsShared}"
+                                            OnColor="{DynamicResource Primary}"
+                                            Scale="0.8"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <!--  VisualStateManager hier einfügen  -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="part_ItemPanel" Property="Border.Stroke" Value="{DynamicResource Border}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="part_ItemPanel" Property="Border.Stroke" Value="{DynamicResource Selection}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+    <!--#endregion-->
+
+
+
+    <!--  🔲 Wrapper-Layout mit Padding  -->
+    <!--
+    <Grid Padding="5">
+
+    -->
+    <!--  📋 Listendarstellung der Projekte  -->
+    <!--
+        <CollectionView
+            Background="{DynamicResource Gray950Brush}"
+            ItemsSource="{Binding Projects}"
+            SelectionMode="Single">
+
+    -->
+    <!--  🔽 Vertikale Anordnung der Items  -->
+    <!--
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+
+    -->
+    <!--  📦 Template für jedes Projekt  -->
+    <!--
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ProjectDTO">
+
+                    <VerticalStackLayout>
+
+    -->
+    <!--  🔤 Projektname und Zuordnung  -->
+    <!--
+                        <VerticalStackLayout Padding="12,6,12,6">
+                            <Label FontAttributes="Bold" Text="{Binding Name}" />
+
+    -->
+    <!--  🧾 Details: CompanyId und UserId  -->
+    <!--
+                            <HorizontalStackLayout Margin="0,4,0,2">
+                                <Label
+                                    FontSize="13"
+                                    Opacity="0.8"
+                                    Text="CompanyId:" />
+                                <Label
+                                    Margin="5,0,0,0"
+                                    FontSize="13"
+                                    Text="{Binding CompanyId}"
+                                    TextColor="Orange" />
+                                <Label
+                                    Margin="10,0,0,0"
+                                    FontSize="13"
+                                    Opacity="0.8"
+                                    Text="UserId:" />
+                                <Label
+                                    Margin="5,0,0,0"
+                                    FontSize="13"
+                                    Text="{Binding UserId}"
+                                    TextColor="Orange" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+    -->
+    <!--  ➖ Trennlinie zwischen Einträgen  -->
+    <!--
+                        <Border HeightRequest="1" Stroke="{DynamicResource Gray900}" />
+                    </VerticalStackLayout>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>-->
+</controls:CustomPage>

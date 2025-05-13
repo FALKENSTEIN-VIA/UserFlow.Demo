@@ -1,0 +1,11 @@
+Emoji	Bedeutung / Einsatzzweck	Empfohlenes Log-Level
+✅	Erfolgreich abgeschlossen	Information
+ℹ️	Informative Ausgabe	Information
+⚠️	Warnung, aber nicht kritisch	Warning
+❌	Fehler	Error
+🔥	Schwerer Fehler / Crash	Fatal (falls verwendet)
+🛠️	Wartung / Systeminterner Prozess	Debug oder Information
+🚀	Startvorgang / Initialisierung	Information
+📦	Daten gespeichert / geladen	Information
+🔒	Authentifizierung / Sicherheit	Information / Warning / Error
+🧪	Testausgabe

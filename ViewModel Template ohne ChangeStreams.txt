@@ -1,0 +1,107 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
+using UserFlow.API.HTTP.Base;
+using UserFlow.API.Shared.DTO;
+
+namespace UserFlow.Maui.Client.ViewModels;
+
+/// <summary>
+/// 📄 ViewModel for managing YourEntity via API without ChangeStreams.
+/// </summary>
+public partial class YourEntityApiViewModel : BaseViewModel
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public YourEntityApiViewModel(IUnitOfWork unitOfWork, ILogger<YourEntityApiViewModel> logger)
+        : base(logger)
+    {
+        _unitOfWork = unitOfWork;
+    }
+
+    [ObservableProperty]
+    public partial ObservableCollection<YourEntityDTO> YourEntities { get; set; } = [];
+
+    [ObservableProperty]
+    public partial YourEntityDTO? CurrentYourEntity { get; set; }
+
+    [RelayCommand]
+    public async Task LoadAsync()
+    {
+        await RunApiAsync(
+            () => _unitOfWork.YourEntities.GetAllAsync(),
+            result =>
+            {
+                YourEntities = new ObservableCollection<YourEntityDTO>((result ?? []).OrderBy(x => x.Id));
+                CurrentYourEntity = YourEntities.FirstOrDefault();
+                _logger.LogInformation("✅ Loaded {Count} entities.", YourEntities.Count);
+                return Task.CompletedTask;
+            },
+            onFailure: () => _logger.LogWarning("⚠️ No entities returned."),
+            loadingMessage: "📄 Loading entities...");
+    }
+
+    [RelayCommand]
+    public async Task CreateAsync()
+    {
+        if (CurrentYourEntity == null)
+        {
+            StatusMessage = "❗ Please fill in the entity details.";
+            return;
+        }
+
+        await RunApiAsync(
+            () => _unitOfWork.YourEntities.CreateAsync(CurrentYourEntity),
+            result =>
+            {
+                StatusMessage = "✅ Entity created.";
+                _logger.LogInformation("✅ Entity created: {Entity}", CurrentYourEntity);
+                return LoadAsync(); // Optional reload after create
+            },
+            onFailure: () => StatusMessage = "❌ Failed to create entity.",
+            loadingMessage: "➕ Creating entity...");
+    }
+
+    [RelayCommand]
+    public async Task UpdateAsync()
+    {
+        if (CurrentYourEntity == null)
+        {
+            StatusMessage = "❗ Please select an entity.";
+            return;
+        }
+
+        await RunApiAsync(
+            call: () => _unitOfWork.YourEntities.UpdateAsync(CurrentYourEntity),
+            onSuccess: result =>
+            {
+                StatusMessage = "✅ Entity updated.";
+                _logger.LogInformation("✅ Entity updated: {Entity}", CurrentYourEntity);
+                return LoadAsync(); // Optional reload after update
+            },
+            onFailure: () => StatusMessage = "❌ Failed to update entity.",
+            loadingMessage: "🔄 Updating entity...");
+    }
+
+    [RelayCommand]
+    public async Task DeleteAsync()
+    {
+        if (CurrentYourEntity == null)
+        {
+            StatusMessage = "❗ Please select an entity.";
+            return;
+        }
+
+        await RunApiAsync(
+            () => _unitOfWork.YourEntities.DeleteAsync(CurrentYourEntity.Id),
+            result =>
+            {
+                StatusMessage = "✅ Entity deleted.";
+                _logger.LogInformation("🗑️ Entity deleted: {Id}", CurrentYourEntity.Id);
+                return LoadAsync(); // Reload list
+            },
+            onFailure: () => StatusMessage = "❌ Failed to delete entity.",
+            loadingMessage: "🗑️ Deleting entity...");
+    }
+}

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<controls:CustomPage
+    x:Class="UserFlow.Maui.Client.Views.CompaniesPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:UserFlow.Maui.Client.UserControls"
+    xmlns:dtos="clr-namespace:UserFlow.API.Shared.DTO;assembly=UserFlow.API.Shared"
+    xmlns:viewModels="clr-namespace:UserFlow.Maui.Client.ViewModels"
+    Title="Companies and Employees"
+    x:DataType="viewModels:CompaniesViewModel"
+    IsBackButtonVisible="true"
+    IsNavBarVisible="true">
+
+    <Grid RowDefinitions="405,Auto,*">
+
+        <!--  Companies  -->
+        <CollectionView
+            x:Name="CompaniesCollectionView"
+            Margin="7,3"
+            ItemsSource="{Binding Companies}"
+            SelectedItem="{Binding CurrentCompany}"
+            SelectionMode="Single">
+            <!--  EmptyView  -->
+            <CollectionView.EmptyView>
+                <controls:EmptyViewPresenter x:DataType="CollectionView" HeightRequest="{Binding Source={x:RelativeSource AncestorType={x:Type CollectionView}}, Path=Height}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="4" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <!--  Items Template  -->
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:CompanyDTO">
+                    <!--  Wrapper ContentView für VisualStateManager  -->
+                    <ContentView x:Name="RootView">
+                        <Grid>
+                            <!--  Haupt-Border mit Stroke  -->
+                            <Border
+                                x:Name="part_ItemPanel"
+                                Background="{DynamicResource Card}"
+                                StrokeShape="RoundRectangle 5"
+                                StrokeThickness="1.5">
+                                <!--  Grid-Aufbau mit Header + Details  -->
+                                <Grid RowDefinitions="Auto,*">
+                                    <!--  Header-Bereich  -->
+                                    <Border Background="{DynamicResource CardHeader}" StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="3,3,0,0" />
+                                        </Border.StrokeShape>
+                                        <Grid
+                                            Grid.Row="1"
+                                            Margin="12,6,5,7"
+                                            ColumnDefinitions="120,*,Auto"
+                                            VerticalOptions="Center">
+                                            <HorizontalStackLayout>
+                                                <Label Text="Company Id" VerticalOptions="Center" />
+                                                <Label
+                                                    Grid.Column="1"
+                                                    Margin="5,0,0,0"
+                                                    Text="{Binding Id}"
+                                                    VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Name}"
+                                                VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                    <!--  Detail-Content  -->
+                                    <Grid
+                                        Grid.Row="1"
+                                        Margin="12,8,5,10"
+                                        ColumnDefinitions="120,*"
+                                        RowDefinitions="Auto,Auto,*">
+                                        <Label
+                                            Opacity="0.65"
+                                            Text="Address:"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding Address}"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Row="2"
+                                            Opacity="0.65"
+                                            Text="PhoneNumber:"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Text="{Binding PhoneNumber, Converter={StaticResource EmptyOrNullToDashConverter}}"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <!--  VisualStateManager hier einfügen  -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="part_ItemPanel" Property="Border.Stroke" Value="{DynamicResource Border}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="part_ItemPanel" Property="Border.Stroke" Value="{DynamicResource Selection}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!--  Employees  -->
+        <Border
+            Grid.Row="1"
+            Background="{DynamicResource PrimaryDark}"
+            StrokeThickness="0">
+            <HorizontalStackLayout Margin="15,10">
+                <Label
+                    Margin="5,0,0,0"
+                    FontAttributes="Bold"
+                    Opacity="0.8"
+                    Text="Employees of Company:" />
+                <Label
+                    Margin="20,0,0,0"
+                    FontAttributes="Bold"
+                    Text="{Binding CurrentCompany.Id}" />
+                <Label
+                    Margin="10,0"
+                    FontAttributes="Bold"
+                    Text="{Binding CurrentCompany.Name}" />
+            </HorizontalStackLayout>
+        </Border>
+        <CollectionView
+            x:Name="EmployeesCollectionView"
+            Grid.Row="2"
+            Margin="7"
+            ItemsSource="{Binding Employees}"
+            SelectedItem="{Binding CurrentEmployee, Mode=TwoWay}"
+            SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="4" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <!--  Items Template  -->
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:EmployeeDTO">
+                    <!--  Wrapper ContentView für VisualStateManager  -->
+                    <ContentView x:Name="RootView">
+                        <Grid>
+                            <!--  Haupt-Border mit Stroke  -->
+                            <Border
+                                x:Name="part_ItemPanel2"
+                                Background="{DynamicResource Card}"
+                                StrokeShape="RoundRectangle 5"
+                                StrokeThickness="1.5">
+                                <!--  Grid-Aufbau mit Header + Details  -->
+                                <Grid RowDefinitions="Auto,*">
+                                    <!--  Header-Bereich  -->
+                                    <Border Background="{DynamicResource CardHeader}" StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="3,3,0,0" />
+                                        </Border.StrokeShape>
+                                        <Grid
+                                            Grid.Row="1"
+                                            Margin="12,6,5,7"
+                                            ColumnDefinitions="120,*,Auto"
+                                            VerticalOptions="Center">
+                                            <HorizontalStackLayout>
+                                                <Label Text="Employee Id" VerticalOptions="Center" />
+                                                <Label
+                                                    Grid.Column="1"
+                                                    Margin="5,0,0,0"
+                                                    Text="{Binding Id}"
+                                                    VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Name}"
+                                                VerticalOptions="Center" />
+                                            <!--  User Role  -->
+                                            <Border
+                                                Grid.Column="3"
+                                                Margin="0,0,5,0"
+                                                Padding="10,5,10,6"
+                                                Background="{DynamicResource PrimaryDark}"
+                                                Stroke="#40000000"
+                                                StrokeShape="RoundRectangle 30"
+                                                StrokeThickness="1">
+                                                <Label
+                                                    FontSize="12"
+                                                    Text="{Binding Role}"
+                                                    TextColor="White" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <!--  Detail-Content  -->
+                                    <Grid
+                                        Grid.Row="1"
+                                        Margin="12,8,5,10"
+                                        ColumnDefinitions="120,*">
+                                        <Label
+                                            Opacity="0.65"
+                                            Text="Email:"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding Email}"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <!--  VisualStateManager hier einfügen  -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="part_ItemPanel2" Property="Border.Stroke" Value="{DynamicResource Border}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="part_ItemPanel2" Property="Border.Stroke" Value="{DynamicResource Selection}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</controls:CustomPage>

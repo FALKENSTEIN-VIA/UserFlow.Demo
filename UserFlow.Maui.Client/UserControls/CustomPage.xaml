@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="UserFlow.Maui.Client.UserControls.CustomPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:UserFlow.Maui.Client.UserControls"
+    x:Name="_root"
+    Title=""
+    x:DataType="controls:CustomPage"
+    Background="{DynamicResource Background}"
+    NavigationPage.HasBackButton="False"
+    NavigationPage.HasNavigationBar="False">
+
+    <!--  🎨 Custom ControlTemplate for reusable layout  -->
+    <ContentPage.ControlTemplate>
+
+        <ControlTemplate>
+
+            <!--  🔲 Define the main layout grid with two rows  -->
+            <Grid RowDefinitions="Auto,*">
+
+                <!--  🧭 Top navigation bar (optional)  -->
+                <Border
+                    Background="{DynamicResource NavHeader}"
+                    IsVisible="{Binding Source={RelativeSource AncestorType={x:Type controls:CustomPage}}, Path=IsNavBarVisible}"
+                    StrokeThickness="0">
+
+                    <VerticalStackLayout>
+
+                        <!--  🔙 Navigation bar content  -->
+                        <HorizontalStackLayout HeightRequest="40">
+
+                            <!--  🔙 Back button (conditionally visible)  -->
+                            <Button
+                                Margin="8,0,0,0"
+                                Padding="3"
+                                Background="Transparent"
+                                BorderWidth="0"
+                                Clicked="BackButton_Clicked"
+                                CornerRadius="0"
+                                HeightRequest="35"
+                                ImageSource="back64w.png"
+                                IsVisible="{TemplateBinding IsBackButtonVisible}"
+                                VerticalOptions="Center"
+                                WidthRequest="35" />
+
+                            <!--  📄 Title label (bound to page title)  -->
+                            <Label
+                                Margin="15,0,0,2"
+                                FontAttributes="Bold"
+                                FontSize="17"
+                                Text="{TemplateBinding Title}"
+                                VerticalOptions="Center" />
+
+                        </HorizontalStackLayout>
+
+                        <!--  📏 Separator line  -->
+                        <Border
+                            Background="{DynamicResource Separator}"
+                            HeightRequest="1"
+                            Opacity="0.5"
+                            StrokeThickness="0" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--  🧩 Main content of the page  -->
+                <ContentPresenter Grid.Row="1" BindingContext="{TemplateBinding BindingContext}" />
+
+            </Grid>
+        </ControlTemplate>
+    </ContentPage.ControlTemplate>
+</ContentPage>
+
+<!--
+    *****************************************************************************************
+    @remarks 📄 Developer Notes:
+    - This page uses a custom ControlTemplate with a dynamic navigation bar.
+    - Visibility is controlled by `IsNavBarVisible` and `IsBackButtonVisible` bindable properties.
+    - Intended to be reused across pages to maintain consistent layout and UX.
+    *****************************************************************************************
+-->

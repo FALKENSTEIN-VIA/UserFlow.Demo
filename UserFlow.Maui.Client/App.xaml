@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application
+    x:Class="UserFlow.Maui.Client.App"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:conv="clr-namespace:UserFlow.Maui.Client.Converter"
+    xmlns:local="clr-namespace:UserFlow.Maui.Client">
+
+    <!--  🎨 Global application resources  -->
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <!--  📚 Merge color and style dictionaries  -->
+            <ResourceDictionary.MergedDictionaries>
+                <!--  🌈 Colors for dark/light themes  -->
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <!--  💅 Typography, spacing, visual styles  -->
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--  🔄 Converters  -->
+            <conv:EmptyOrNullToDashConverter x:Key="EmptyOrNullToDashConverter" />
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+
+<!--
+    *****************************************************************************************
+    @file App.xaml
+    @author Claus Falkenstein
+    @company VIA Software GmbH
+    @date 2025-04-27
+    @brief Declares global resources and merged style dictionaries for the MAUI app.
+    @details
+    - This file is loaded before any UI is rendered.
+    - Defines themes, colors, styles and value converters.
+    - Keeps all appearance-related resources in a centralized place.
+    *****************************************************************************************
+-->

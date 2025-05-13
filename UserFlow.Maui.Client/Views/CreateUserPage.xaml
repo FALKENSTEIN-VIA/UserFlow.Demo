@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    @file CreateUserPage.xaml
+    @author Claus Falkenstein
+    @company VIA Software GmbH
+    @date 2025-05-09
+    @brief XAML page for admin-driven user creation.
+-->
+
+<ContentPage
+    x:Class="UserFlow.Maui.Client.Views.CreateUserPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:UserFlow.Maui.Client.ViewModels"
+    Title="Create User"
+    x:DataType="viewmodel:CreateUserViewModel"
+    BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!--  🔤 Email  -->
+            <Label Text="Email" />
+            <Entry Keyboard="Email" Text="{Binding Email}" />
+
+            <!--  🧾 Name  -->
+            <Label Text="Name" />
+            <Entry Text="{Binding Name}" />
+
+            <!--  🎭 Role  -->
+            <Label Text="Role" />
+            <Picker
+                Title="Select a Role"
+                ItemsSource="{Binding AvailableRoles}"
+                SelectedItem="{Binding Role}" />
+
+            <!--  ⚠️ Error Message  -->
+            <Label
+                IsVisible="{Binding HasError}"
+                Text="{Binding ErrorMessage}"
+                TextColor="Red" />
+
+            <!--  ✅ Submit Button  -->
+            <Button Command="{Binding CreateUserCommand}" Text="Create User" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

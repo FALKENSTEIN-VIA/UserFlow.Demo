@@ -1,0 +1,335 @@
+﻿<!--
+    *****************************************************************************************
+    @file LoginPage.xaml
+    @author Claus Falkenstein
+    @company VIA Software GmbH
+    @date 2025-04-27
+    @brief Login-Seite mit eingebetteter Navigation, Testnutzer-Auswahl und Initialdaten-Hinweis.
+    *****************************************************************************************
+-->
+
+<controls:CustomPage
+    x:Class="UserFlow.Maui.Client.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:UserFlow.Maui.Client.UserControls"
+    xmlns:dtos="clr-namespace:UserFlow.API.Shared.DTO;assembly=UserFlow.API.Shared"
+    xmlns:viewmodels="clr-namespace:UserFlow.Maui.Client.ViewModels"
+    Title=""
+    x:DataType="viewmodels:LoginViewModel"
+    IsBackButtonVisible="False"
+    IsNavBarVisible="False">
+
+    <!--  📐 Main Layout  -->
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+
+        <!--#region 🧱 Header-Hintergrund-->
+        <Border Background="{DynamicResource NavHeader}" StrokeThickness="0" />
+        <!--#endregion-->
+
+        <!--#region 🧾 Titel-->
+        <Grid HeightRequest="40" RowDefinitions="*,Auto">
+            <Label
+                Margin="15,0,0,0"
+                FontSize="18"
+                Opacity="1"
+                Text="▶  UserFlow API V1.0 ®"
+                VerticalOptions="Center" />
+            <!--  TextColor="{DynamicResource SecondaryAlt}"  -->
+            <Label
+                Grid.Column="3"
+                Margin="0,0,16,0"
+                FontAttributes="Bold"
+                FontSize="13"
+                HorizontalOptions="End"
+                Opacity="0.7"
+                Text="TEST ENVIRONMENT"
+                TextColor="White"
+                VerticalOptions="Center" />
+            <Border
+                Grid.Row="1"
+                Background="{DynamicResource BorderLight}"
+                HeightRequest="1"
+                StrokeThickness="0" />
+            <!--  TextColor="#FFC550"  -->
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region ✉️ Eingabefelder für E-Mail und Passwort und Login Button-->
+        <Grid
+            Grid.Row="1"
+            Padding="15,18,15,0"
+            ColumnDefinitions="*,*,Auto">
+
+            <!--  🔐 Eingabefeld für Email  -->
+            <Entry
+                x:Name="InputEmail"
+                FontSize="15"
+                Keyboard="Email"
+                Placeholder="E-Mail"
+                Text="{Binding Email}"
+                VerticalOptions="Center" />
+
+            <!--  🔐 Eingabefeld für Passwort  -->
+            <Entry
+                x:Name="InputPassword"
+                Grid.Column="1"
+                Margin="15,0,0,0"
+                FontSize="15"
+                IsPassword="True"
+                Placeholder="Passwort"
+                Text="Test123!"
+                VerticalOptions="Center" />
+
+            <!--  🔓 Login-Button  -->
+            <Button
+                Grid.Column="2"
+                Margin="15,0,0,0"
+                Command="{Binding LoginCommand}"
+                FontAttributes="Bold"
+                Text="Login"
+                TextColor="White"
+                WidthRequest="145">
+                <!--<Button.Style>
+                    <Style TargetType="Button" >
+                        <Style.Triggers>
+                            <DataTrigger  x:DataType="{x:Type Button}"
+                                Binding="{Binding IsEnabled}"
+                                TargetType="Button"
+                                Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding IsEnabled}"
+                                TargetType="Button"
+                                Value="False">
+                                <Setter Property="Background" Value="Red" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>-->
+            </Button>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region ⚠️ Fehlermeldung bei Login / List Header-->
+        <Label
+            Grid.Row="2"
+            Margin="0,15,0,0"
+            FontSize="15"
+            HorizontalOptions="Center"
+            Opacity="0.9"
+            Text="{Binding ErrorMessage}"
+            TextColor="#FFFF6080"
+            VerticalOptions="Center" />
+        <!--#endregion-->
+
+        <!--#region ⚠️ List Header mit Switches for Admins- and Users-Visibility-->
+        <Grid
+            Grid.Row="3"
+            Grid.Column="2"
+            Margin="0,5,-90,0"
+            ColumnDefinitions="*,Auto,Auto">
+            <Label
+                Margin="18,7,0,0"
+                FontSize="14"
+                Text="▶  Registered Users &amp; Admins"
+                VerticalOptions="Center" />
+            <HorizontalStackLayout Grid.Column="1" Margin="0,0,-80,2">
+                <Label
+                    Margin="0,6,14,0"
+                    FontSize="12"
+                    Text="Show Admins"
+                    VerticalOptions="Center" />
+                <Switch IsToggled="{Binding ShowAdmins}" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Column="2" Margin="0,0,0,2">
+                <Label
+                    Margin="0,6,14,0"
+                    FontSize="12"
+                    Text="Show Users"
+                    VerticalOptions="Center" />
+                <Switch IsToggled="{Binding ShowUsers}" />
+            </HorizontalStackLayout>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region  🧪 Bereich für Liste der Testnutzer (Admins, Managers + Users)-->
+        <Border
+            Grid.Row="4"
+            Margin="15,10,15,15"
+            Padding="1,2.5"
+            Background="{DynamicResource BackgroundDark}"
+            Stroke="{DynamicResource Border}"
+            StrokeShape="RoundRectangle 5"
+            StrokeThickness="1.5">
+            <!--  Margin="13,-1"  -->
+            <CollectionView
+                x:Name="TestUserCollectionView"
+                Grid.Row="1"
+                Margin="7,3"
+                ItemsSource="{Binding TestUsers}"
+                SelectedItem="{Binding CurrentTestUser, Mode=TwoWay}"
+                SelectionMode="Single"
+                VerticalScrollBarVisibility="Default">
+
+                <!--  Items Layout  -->
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="4" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <!--  Items Template  -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:UserDTO">
+                        <!--  Wrapper ContentView für VisualStateManager  -->
+                        <ContentView x:Name="RootView">
+                            <Grid>
+                                <!--  Haupt-Border mit Stroke  -->
+                                <Border
+                                    x:Name="part_ItemPanel"
+                                    Background="{DynamicResource Card}"
+                                    StrokeShape="RoundRectangle 5"
+                                    StrokeThickness="1.5">
+                                    <!--  Grid-Aufbau mit Header + Details  -->
+                                    <Grid RowDefinitions="Auto,*">
+                                        <!--  Header-Bereich  -->
+                                        <Border Background="{DynamicResource CardHeader}" StrokeThickness="0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="3,3,0,0" />
+                                            </Border.StrokeShape>
+                                            <Grid
+                                                Grid.Row="1"
+                                                Margin="12,6,5,7"
+                                                ColumnDefinitions="120,*,Auto"
+                                                VerticalOptions="Center">
+                                                <HorizontalStackLayout>
+                                                    <Label Text="User Id" VerticalOptions="Center" />
+                                                    <Label
+                                                        Grid.Column="1"
+                                                        Margin="5,0,0,0"
+                                                        Text="{Binding Id}"
+                                                        VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                                <Label
+                                                    Grid.Column="1"
+                                                    Text="{Binding Name}"
+                                                    VerticalOptions="Center" />
+                                                <!--  User Role  -->
+                                                <Border
+                                                    Grid.Column="3"
+                                                    Margin="0,0,5,0"
+                                                    Padding="10,5,10,6"
+                                                    Background="{DynamicResource PrimaryDark}"
+                                                    Stroke="#40000000"
+                                                    StrokeShape="RoundRectangle 30"
+                                                    StrokeThickness="1">
+                                                    <Label
+                                                        FontSize="12"
+                                                        Text="{Binding Role}"
+                                                        TextColor="White" />
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+
+                                        <!--  Detail-Content  -->
+                                        <Grid
+                                            Grid.Row="1"
+                                            Margin="12,8,5,10"
+                                            ColumnDefinitions="120,*"
+                                            RowDefinitions="Auto,Auto,*">
+                                            <Label
+                                                Opacity="0.65"
+                                                Text="EMail:"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Email}"
+                                                TextColor="{DynamicResource PrimaryLight}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Row="1"
+                                                Opacity="0.65"
+                                                Text="Company Id:"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Text="{Binding CompanyId, Converter={StaticResource EmptyOrNullToDashConverter}}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Row="2"
+                                                Opacity="0.65"
+                                                Text="Company Name:"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Text="{Binding CompanyName, Converter={StaticResource EmptyOrNullToDashConverter}}"
+                                                VerticalOptions="Center" />
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                            <!--  VisualStateManager hier einfügen  -->
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter TargetName="part_ItemPanel" Property="Border.Stroke" Value="{DynamicResource Border}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter TargetName="part_ItemPanel" Property="Border.Stroke" Value="{DynamicResource Selection}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+        <!--#endregion-->
+
+        <!--#region ⏳ Overlay während Initialdaten geladen werden-->
+        <Grid
+            Grid.Row="1"
+            Grid.RowSpan="4"
+            Background="{DynamicResource Background}"
+            IsVisible="{Binding IsWaitingForTestUsers}">
+            <Grid Grid.RowSpan="4" VerticalOptions="Center">
+                <Image
+                    Aspect="AspectFill"
+                    IsAnimationPlaying="True"
+                    Opacity="0.4"
+                    Source="bits.gif" />
+                <Border
+                    Padding="20,15"
+                    Background="{StaticResource Gray900}"
+                    HorizontalOptions="Center"
+                    Stroke="{StaticResource Gray600}"
+                    StrokeShape="RoundRectangle 6"
+                    StrokeThickness="1"
+                    VerticalOptions="Center">
+                    <Label
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Center"
+                        Text="Waiting for API connection ..."
+                        VerticalOptions="Center" />
+                    <Border.Shadow>
+                        <Shadow Radius="10" Opacity="0.8"/>
+                    </Border.Shadow>
+                </Border>
+                <ActivityIndicator
+                    Margin="0,250,0,0"
+                    HeightRequest="50"
+                    IsRunning="True"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+            </Grid>
+        </Grid>
+        <!--#endregion-->
+
+    </Grid>
+</controls:CustomPage>
