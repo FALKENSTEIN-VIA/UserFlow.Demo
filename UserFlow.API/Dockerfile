@@ -14,3 +14,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "UserFlow.Demo.dll"]
+
+
