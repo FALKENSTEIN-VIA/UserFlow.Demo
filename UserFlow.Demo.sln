@@ -37,8 +37,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{625DCB58-0EF2-449C-AFFB-5E6EDE30C690}"
 	ProjectSection(SolutionItems) = preProject
 		Documentation\Documents\UserFlow API Features - Aktueller Stand 2025-05-04.docx = Documentation\Documents\UserFlow API Features - Aktueller Stand 2025-05-04.docx
-		ViewModel Template ohne ChangeStreams.txt = ViewModel Template ohne ChangeStreams.txt
 		..\..\..\..\Temp\ViewModel Template für ChangeStreams.txt = ..\..\..\..\Temp\ViewModel Template für ChangeStreams.txt
+		ViewModel Template ohne ChangeStreams.txt = ViewModel Template ohne ChangeStreams.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.API.Http", "UserFlow.API.HTTP\UserFlow.API.Http.csproj", "{507A4ACD-3994-2822-AF8B-DAE297F721AF}"
@@ -49,6 +49,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database Triggers", "Databa
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserFlow.API.ChangeStreams", "UserFlow.API.ChangeStreams\UserFlow.API.ChangeStreams.csproj", "{F12B0177-8D04-2070-4418-1044E8EC4B02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile.txt = Dockerfile.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

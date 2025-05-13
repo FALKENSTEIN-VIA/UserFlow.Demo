@@ -133,6 +133,8 @@ Log.Information("👉 Authentication Middleware has been enabled...");
 /// 👉 ✨ Enable authorization middleware
 app.UseAuthorization();
 
+app.Urls.Add("http://+:8080");
+
 /// 👉 ✨ Map controllers to routes (e.g., /api/...)
 app.MapControllers();
 Log.Information("👉 Controllers have been mapped to Routes...");
