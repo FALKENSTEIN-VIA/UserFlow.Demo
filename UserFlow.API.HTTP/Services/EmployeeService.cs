@@ -40,6 +40,14 @@ public class EmployeeService : IEmployeeService
         return await _httpClient.GetAsync<EmployeeDTO>($"api/employees/{id}");
     }
 
+    /// <inheritdoc/>
+    public async Task<bool> UpdateAsync(EmployeeUpdateDTO dto)
+    {
+        var response = await _httpClient.PutAsync("api/employees", dto);
+        return response.IsSuccessStatusCode;
+    }
+
+
     public async Task<EmployeeDTO?> CreateAsync(EmployeeCreateDTO dto)
     {
         return await _httpClient.PostAsync<EmployeeCreateDTO, EmployeeDTO>("api/employees", dto);
@@ -201,7 +209,7 @@ public class EmployeeService : IEmployeeService
 
     #region 📥 By Company
 
-    public async Task<IEnumerable<EmployeeDTO>> GetEmployeesByCompanyIdAsync(long companyId)
+    public async Task<IEnumerable<EmployeeDTO>> GetByCompanyIdAsync(long companyId)
     {
         var result = await _httpClient.GetAsync<List<EmployeeDTO>>($"api/companies/{companyId}/users");
         return result ?? [];

@@ -46,7 +46,7 @@ public class ScreenController : ControllerBase
     #region 🔒 Fields
 
     /// 💾 Database context for EF Core operations
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _context;
 
     /// 👤 Service to access current user's identity and roles
     private readonly ICurrentUserService _currentUser;
@@ -61,7 +61,7 @@ public class ScreenController : ControllerBase
     /// 🛠 Constructor to inject dependencies
     public ScreenController(AppDbContext db, ICurrentUserService currentUser, ILogger<ScreenController> logger)
     {
-        _db = db;                             // 💾 Store injected DbContext
+        _context = db;                             // 💾 Store injected DbContext
         _currentUser = currentUser;           // 👤 Store injected user context
         _logger = logger;                     // 📝 Store injected logger
     }
@@ -74,11 +74,11 @@ public class ScreenController : ControllerBase
     /// 📥 Get all Screens (filtered by company unless GlobalAdmin)
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ScreenDTO>>> GetScreens()
+    public async Task<ActionResult<IEnumerable<ScreenDTO>>> GetAllAsync()
     {
         _logger.LogInformation("📥 Retrieving all screens for user {UserId}", _currentUser.UserId);
 
-        var query = _db.Screens.AsQueryable(); // 🧮 Start with all Screens
+        var query = _context.Screens.AsQueryable(); // 🧮 Start with all Screens
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
         {
@@ -99,11 +99,11 @@ public class ScreenController : ControllerBase
     /// 📥 Get a single screen by ID (only if authorized)
     /// </summary>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<ScreenDTO>> GetScreenById(long id)
+    public async Task<ActionResult<ScreenDTO>> GetByIdAsync(long id)
     {
         _logger.LogInformation("🔍 Retrieving screen with ID {Id}", id);
 
-        var result = await _db.Screens
+        var result = await _context.Screens
             .Where(s => s.Id == id) // 🔍 Match by ID
             .Where(s => _currentUser.IsInRole("GlobalAdmin") || s.CompanyId == _currentUser.CompanyId) // 🔐 Company check
             .Select(ScreenMapper.ToScreenDto()) // 🧠 Map to DTO
@@ -123,7 +123,7 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<ScreenDTO>> CreateScreen(ScreenCreateDTO dto)
+    public async Task<ActionResult<ScreenDTO>> CreateAsync(ScreenCreateDTO dto)
     {
         _logger.LogInformation("➕ Creating new screen with name '{Name}'", dto.Name);
 
@@ -147,18 +147,18 @@ public class ScreenController : ControllerBase
             CreatedBy = _currentUser.UserId
         };
 
-        _db.Screens.Add(entity);       // 💾 Add to context
-        await _db.SaveChangesAsync();  // 💾 Commit changes
+        _context.Screens.Add(entity);       // 💾 Add to context
+        await _context.SaveChangesAsync();  // 💾 Commit changes
 
         _logger.LogInformation("✅ Screen created with ID {Id}", entity.Id);
 
         /// 📦 Reload with DTO projection
-        var result = await _db.Screens
+        var result = await _context.Screens
             .Where(s => s.Id == entity.Id)
             .Select(ScreenMapper.ToScreenDto())
             .FirstAsync();
 
-        return CreatedAtAction(nameof(GetScreenById), new { id = result.Id }, result); // ✅ Return 201 Created
+        return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result); // ✅ Return 201 Created
     }
 
     /// <summary>
@@ -166,11 +166,11 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> UpdateScreen(long id, ScreenUpdateDTO dto)
+    public async Task<IActionResult> UpdateAsync(long id, ScreenUpdateDTO dto)
     {
         _logger.LogInformation("✏️ Updating screen with ID {Id}", id);
 
-        var entity = await _db.Screens
+        var entity = await _context.Screens
             .FirstOrDefaultAsync(s => s.Id == id &&
                 (_currentUser.IsInRole("GlobalAdmin") || s.CompanyId == _currentUser.CompanyId));
 
@@ -187,7 +187,7 @@ public class ScreenController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         _logger.LogInformation("✅ Screen {Id} updated successfully", id);
 
         return NoContent();
@@ -198,11 +198,11 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> DeleteScreen(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑 Deleting screen with ID {Id}", id);
 
-        var entity = await _db.Screens
+        var entity = await _context.Screens
             .FirstOrDefaultAsync(s => s.Id == id &&
                 (_currentUser.IsInRole("GlobalAdmin") || s.CompanyId == _currentUser.CompanyId));
 
@@ -216,7 +216,7 @@ public class ScreenController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Screen {Id} marked as deleted", id);
         return NoContent();
@@ -227,11 +227,11 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPost("{id:long}/restore")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> RestoreScreen(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         _logger.LogInformation("🔁 Attempting to restore screen {Id}", id);
 
-        var entity = await _db.Screens
+        var entity = await _context.Screens
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(s =>
                 s.Id == id &&
@@ -248,7 +248,7 @@ public class ScreenController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         _logger.LogInformation("✅ Screen {Id} restored", id);
 
         return NoContent();
@@ -258,7 +258,7 @@ public class ScreenController : ControllerBase
     /// 📄 Get screens with pagination
     /// </summary>
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedResultDTO<ScreenDTO>>> GetPagedScreens(int page = 1, int pageSize = 20)
+    public async Task<ActionResult<PagedResultDTO<ScreenDTO>>> GetPagedAsync(int page = 1, int pageSize = 20)
     {
         _logger.LogInformation("📄 Retrieving paged screens: page {Page}, size {Size}", page, pageSize);
 
@@ -268,7 +268,7 @@ public class ScreenController : ControllerBase
             return BadRequest("Invalid page or pageSize value.");
         }
 
-        var query = _db.Screens.AsQueryable();
+        var query = _context.Screens.AsQueryable();
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
         {
@@ -306,7 +306,7 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPost("bulk-create")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> BulkCreateScreens(List<ScreenCreateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> BulkCreateAsync(List<ScreenCreateDTO> dtos)
     {
         _logger.LogInformation("📥 Starting bulk screen creation ({Count} items)", dtos.Count);
 
@@ -341,10 +341,10 @@ public class ScreenController : ControllerBase
                 CreatedBy = _currentUser.UserId
             };
 
-            _db.Screens.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.Screens.Add(entity);
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.Screens
+            var dtoResult = await _context.Screens
                 .Where(s => s.Id == entity.Id)
                 .Select(ScreenMapper.ToScreenDto())
                 .FirstAsync();
@@ -367,7 +367,7 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPut("bulk-update")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> BulkUpdateScreens(List<ScreenUpdateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> BulkUpdateAsync(List<ScreenUpdateDTO> dtos)
     {
         _logger.LogInformation("✏️ Starting bulk screen update ({Count} items)", dtos.Count);
 
@@ -382,7 +382,7 @@ public class ScreenController : ControllerBase
 
         foreach (var (dto, index) in dtos.Select((x, i) => (x, i)))
         {
-            var entity = await _db.Screens.FirstOrDefaultAsync(s =>
+            var entity = await _context.Screens.FirstOrDefaultAsync(s =>
                 s.Id == dto.Id && (_currentUser.IsInRole("GlobalAdmin") || s.CompanyId == _currentUser.CompanyId));
 
             if (entity == null)
@@ -399,9 +399,9 @@ public class ScreenController : ControllerBase
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = _currentUser.UserId;
 
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.Screens
+            var dtoResult = await _context.Screens
                 .Where(s => s.Id == entity.Id)
                 .Select(ScreenMapper.ToScreenDto())
                 .FirstAsync();
@@ -424,7 +424,7 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPost("bulk-delete")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> BulkDeleteScreens(List<long> ids)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> BulkDeleteAsync(List<long> ids)
     {
         _logger.LogInformation("🗑 Starting bulk screen deletion ({Count} IDs)", ids.Count);
 
@@ -439,7 +439,7 @@ public class ScreenController : ControllerBase
 
         foreach (var (id, index) in ids.Select((x, i) => (x, i)))
         {
-            var entity = await _db.Screens.FirstOrDefaultAsync(s =>
+            var entity = await _context.Screens.FirstOrDefaultAsync(s =>
                 s.Id == id && (_currentUser.IsInRole("GlobalAdmin") || s.CompanyId == _currentUser.CompanyId));
 
             if (entity == null)
@@ -453,9 +453,9 @@ public class ScreenController : ControllerBase
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = _currentUser.UserId;
 
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.Screens
+            var dtoResult = await _context.Screens
                 .IgnoreQueryFilters()
                 .Where(s => s.Id == entity.Id)
                 .Select(ScreenMapper.ToScreenDto())
@@ -483,11 +483,11 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpGet("export")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> ExportScreensAsCsv()
+    public async Task<IActionResult> ExportAsync()
     {
         _logger.LogInformation("📤 Exporting screens to CSV by user {UserId}", _currentUser.UserId);
 
-        var query = _db.Screens.AsQueryable();
+        var query = _context.Screens.AsQueryable();
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
         {
@@ -517,7 +517,7 @@ public class ScreenController : ControllerBase
     /// </summary>
     [HttpPost("import")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> ImportScreens(IFormFile file)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenDTO>>> ImportAsync(IFormFile file)
     {
         _logger.LogInformation("📥 Importing screens from CSV by user {UserId}", _currentUser.UserId);
 
@@ -564,8 +564,8 @@ public class ScreenController : ControllerBase
                 CreatedBy = _currentUser.UserId
             };
 
-            _db.Screens.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.Screens.Add(entity);
+            await _context.SaveChangesAsync();
             result.ImportedCount++;
         }
 

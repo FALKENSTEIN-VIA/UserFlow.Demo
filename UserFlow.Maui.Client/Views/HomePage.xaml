@@ -51,6 +51,7 @@
                     </Style>
                 </VerticalStackLayout.Resources>
                 <Button Command="{Binding NavigateCompaniesCommand}" Text="Companies" />
+                <Button Command="{Binding NavigateEmployeesCommand}" Text="Employees" />
                 <Button Command="{Binding NavigateUsersCommand}" Text="Users" />
                 <Button Command="{Binding NavigateProjectsCommand}" Text="Projects" />
             </VerticalStackLayout>

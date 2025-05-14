@@ -36,6 +36,11 @@ public class EmployeeDTO : BaseDTO
     public long? CompanyId { get; set; }
 
     /// <summary>
+    /// 🏷️ Optional company name (for display).
+    /// </summary>
+    public string? CompanyName { get; set; } = string.Empty;
+
+    /// <summary>
     /// 👤 Optional reference to the related Identity User.
     /// </summary>
     public long? UserId { get; set; }

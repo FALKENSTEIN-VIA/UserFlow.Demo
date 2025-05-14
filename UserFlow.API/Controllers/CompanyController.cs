@@ -60,7 +60,7 @@ public class CompanyController : ControllerBase
     #region 📄 CRUD Operations
 
     [HttpGet]
-    public async Task<ActionResult<PagedResultDTO<CompanyDTO>>> GetCompanies(
+    public async Task<ActionResult<PagedResultDTO<CompanyDTO>>> GetAllAsync(
         [FromQuery] bool includeUsers = false,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
@@ -99,7 +99,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<CompanyDTO>> GetCompanyById(long id, [FromQuery] bool includeUsers = false)
+    public async Task<ActionResult<CompanyDTO>> GetByIdAsync(long id, [FromQuery] bool includeUsers = false)
     {
         try
         {
@@ -125,7 +125,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CompanyDTO>> CreateCompany([FromBody] CompanyCreateDTO dto)
+    public async Task<ActionResult<CompanyDTO>> CreateAsync([FromBody] CompanyCreateDTO dto)
     {
         try
         {
@@ -146,7 +146,7 @@ public class CompanyController : ControllerBase
                 .Select(CompanyMapper.ToCompanyDto())
                 .FirstAsync();
 
-            return CreatedAtAction(nameof(GetCompanyById), new { id = entity.Id }, result);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = entity.Id }, result);
         }
         catch (Exception ex)
         {
@@ -156,7 +156,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<CompanyDTO>> UpdateCompany([FromBody] CompanyUpdateDTO dto)
+    public async Task<ActionResult<CompanyDTO>> UpdateAsync([FromBody] CompanyUpdateDTO dto)
     {
         try
         {
@@ -187,7 +187,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteCompany(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         try
         {
@@ -211,7 +211,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpPut("{id:long}/restore")]
-    public async Task<IActionResult> RestoreCompany(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         try
         {
@@ -235,7 +235,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpGet("{companyId:long}/users")]
-    public async Task<ActionResult<IEnumerable<UserDTO>>> GetCompanyUsers(long companyId)
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersAsync(long companyId)
     {
         try
         {
@@ -260,7 +260,7 @@ public class CompanyController : ControllerBase
 
     [HttpGet("export")]
     [Produces("text/csv")]
-    public async Task<IActionResult> ExportCompanies()
+    public async Task<IActionResult> ExportAsync()
     {
         try
         {
@@ -286,7 +286,7 @@ public class CompanyController : ControllerBase
 
     [HttpPost("import")]
     [RequestSizeLimit(5 * 1024 * 1024)]
-    public async Task<ActionResult<BulkOperationResultDTO<CompanyDTO>>> ImportCompanies(IFormFile file)
+    public async Task<ActionResult<BulkOperationResultDTO<CompanyDTO>>> ImportAsync(IFormFile file)
     {
         var result = new BulkOperationResultDTO<CompanyDTO>();
         var rowCounter = 0;

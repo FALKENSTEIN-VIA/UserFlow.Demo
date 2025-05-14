@@ -37,7 +37,7 @@ public interface ICompanyService
     /// </summary>
     /// <param name="dto">Company creation data.</param>
     /// <returns>Created <see cref="CompanyDTO"/>.</returns>
-    Task<CompanyDTO> CreateCompanyAsync(CompanyCreateDTO dto);
+    Task<CompanyDTO> CreateAsync(CompanyCreateDTO dto);
 
     /// <summary>
     /// 📝 Updates an existing company.
@@ -45,28 +45,28 @@ public interface ICompanyService
     /// <param name="id">ID of the company to update.</param>
     /// <param name="dto">Updated data.</param>
     /// <returns>True if update succeeded.</returns>
-    Task<bool> UpdateCompanyAsync(long id, CompanyUpdateDTO dto);
+    Task<bool> UpdateAsync(long id, CompanyUpdateDTO dto);
 
     /// <summary>
     /// 🗑️ Deletes a company (soft delete).
     /// </summary>
     /// <param name="id">ID of the company to delete.</param>
     /// <returns>True if deletion succeeded.</returns>
-    Task<bool> DeleteCompanyAsync(long id);
+    Task<bool> DeleteAsync(long id);
 
     /// <summary>
     /// ♻️ Restores a previously deleted company.
     /// </summary>
     /// <param name="id">ID of the company to restore.</param>
     /// <returns>Restored <see cref="CompanyDTO"/> or null.</returns>
-    Task<CompanyDTO?> RestoreCompanyAsync(long id);
+    Task<CompanyDTO?> RestoreAsync(long id);
 
     /// <summary>
     /// 📦 Bulk creates multiple companies at once.
     /// </summary>
     /// <param name="companies">List of companies to create.</param>
     /// <returns>Import result with details.</returns>
-    Task<BulkOperationResultDTO<CompanyDTO>> BulkCreateCompaniesAsync(List<CompanyCreateDTO> companies);
+    Task<BulkOperationResultDTO<CompanyDTO>> BulkCreateAsync(List<CompanyCreateDTO> companies);
 
     /// <summary>
     /// 📃 Retrieves a paginated list of companies.
@@ -74,14 +74,14 @@ public interface ICompanyService
     /// <param name="page">Current page index.</param>
     /// <param name="pageSize">Items per page.</param>
     /// <returns>Paged result set of companies.</returns>
-    Task<PagedResultDTO<CompanyDTO>> GetPagedCompaniesAsync(int page, int pageSize);
+    Task<PagedResultDTO<CompanyDTO>> GetPagedAsync(int page, int pageSize);
 
     /// <summary>
     /// 📥 Imports companies from a file (CSV or Excel).
     /// </summary>
     /// <param name="file">Uploaded file containing company data.</param>
     /// <returns>Import result with errors and success count.</returns>
-    Task<BulkOperationResultDTO<CompanyDTO>> ImportCompaniesAsync(IFormFile file);
+    Task<BulkOperationResultDTO<CompanyDTO>> ImportAsync(IFormFile file);
 
     /// <summary>
     /// 📤 Exports all companies as downloadable file (CSV).
@@ -94,7 +94,7 @@ public interface ICompanyService
     /// </summary>
     /// <param name="dto">Company and admin registration data.</param>
     /// <returns>Authentication tokens and user info if successful.</returns>
-    Task<AuthResponseDTO?> RegisterCompanyAsync(CompanyRegisterDTO dto);
+    Task<AuthResponseDTO?> RegisterAsync(CompanyRegisterDTO dto);
 }
 
 /// <remarks>

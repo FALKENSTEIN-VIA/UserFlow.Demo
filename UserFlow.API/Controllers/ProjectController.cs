@@ -41,7 +41,7 @@ public class ProjectController : ControllerBase
 {
     #region 🔒 Fields
 
-    private readonly AppDbContext _db; // 🗃️ EF Core database context
+    private readonly AppDbContext _context; // 🗃️ EF Core database context
     private readonly ICurrentUserService _currentUser; // 👤 Information about the currently logged-in user
     private readonly ILogger<ProjectController> _logger; // 📝 Logger instance for tracing
 
@@ -54,7 +54,7 @@ public class ProjectController : ControllerBase
     /// </summary>
     public ProjectController(AppDbContext db, ICurrentUserService currentUser, ILogger<ProjectController> logger)
     {
-        _db = db; // 💉 Injected DB context
+        _context = db; // 💉 Injected DB context
         _currentUser = currentUser; // 💉 Injected user context
         _logger = logger; // 💉 Injected logger
     }
@@ -67,10 +67,10 @@ public class ProjectController : ControllerBase
     /// 📄 Retrieves all visible projects for the current user.
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
+    public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllAsync()
     {
         // 🔍 Prepare base query with necessary includes
-        var query = _db.Projects
+        var query = _context.Projects
             .Include(p => p.User)
             .Include(p => p.Company)
             .AsQueryable();
@@ -104,7 +104,7 @@ public class ProjectController : ControllerBase
     /// 📄 Retrieves paginated list of projects for the current user.
     /// </summary>
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedResultDTO<ProjectDTO>>> GetPagedProjects(int page = 1, int pageSize = 20)
+    public async Task<ActionResult<PagedResultDTO<ProjectDTO>>> GetPagedAsync(int page = 1, int pageSize = 20)
     {
         _logger.LogInformation("📄 Retrieving paged projects for user {UserId}, page {Page}, size {Size}", _currentUser.UserId, page, pageSize);
 
@@ -116,7 +116,7 @@ public class ProjectController : ControllerBase
         }
 
         // 🔍 Prepare base query
-        var query = _db.Projects
+        var query = _context.Projects
             .Include(p => p.User)
             .Include(p => p.Company)
             .AsQueryable();
@@ -164,12 +164,12 @@ public class ProjectController : ControllerBase
     /// 🔎 Retrieves a specific project by ID with access control.
     /// </summary>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<ProjectDTO>> GetProjectById(long id)
+    public async Task<ActionResult<ProjectDTO>> GetByIdAsync(long id)
     {
         _logger.LogInformation("🔎 Retrieving project {Id} for user {UserId}", id, _currentUser.UserId);
 
         // 🔍 Load project with navigation properties
-        var project = await _db.Projects
+        var project = await _context.Projects
             .Include(p => p.User)
             .Include(p => p.Company)
             .Where(p => p.Id == id)
@@ -195,7 +195,7 @@ public class ProjectController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<ProjectDTO>> CreateProject(ProjectCreateDTO dto)
+    public async Task<ActionResult<ProjectDTO>> CreateAsync(ProjectCreateDTO dto)
     {
         _logger.LogInformation("➕ Creating project by user {UserId}", _currentUser.UserId);
 
@@ -218,11 +218,11 @@ public class ProjectController : ControllerBase
             CreatedBy = _currentUser.UserId
         };
 
-        _db.Projects.Add(entity); // 💾 Add to context
-        await _db.SaveChangesAsync(); // 💾 Save to DB
+        _context.Projects.Add(entity); // 💾 Add to context
+        await _context.SaveChangesAsync(); // 💾 Save to DB
 
         // 📦 Reload with includes and project to DTO
-        var result = await _db.Projects
+        var result = await _context.Projects
             .Include(p => p.User)
             .Include(p => p.Company)
             .Where(p => p.Id == entity.Id)
@@ -230,7 +230,7 @@ public class ProjectController : ControllerBase
             .FirstAsync();
 
         _logger.LogInformation("✅ Project {Id} created successfully", result.Id);
-        return CreatedAtAction(nameof(GetProjectById), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result);
     }
 
     #endregion
@@ -242,11 +242,11 @@ public class ProjectController : ControllerBase
     /// </summary>
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> UpdateProject(long id, ProjectUpdateDTO dto)
+    public async Task<IActionResult> UpdateAsync(long id, ProjectUpdateDTO dto)
     {
         _logger.LogInformation("✏️ Updating project {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var entity = await _db.Projects
+        var entity = await _context.Projects
             .FirstOrDefaultAsync(p => p.Id == id &&
                 (_currentUser.IsInRole("GlobalAdmin") || p.CompanyId == _currentUser.CompanyId));
 
@@ -262,7 +262,7 @@ public class ProjectController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Project {Id} updated", id);
         return NoContent();
@@ -273,11 +273,11 @@ public class ProjectController : ControllerBase
     /// </summary>
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> DeleteProject(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑️ Deleting project {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var entity = await _db.Projects
+        var entity = await _context.Projects
             .FirstOrDefaultAsync(p => p.Id == id &&
                 (_currentUser.IsInRole("GlobalAdmin") || p.CompanyId == _currentUser.CompanyId));
 
@@ -291,7 +291,7 @@ public class ProjectController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Project {Id} soft-deleted", id);
         return NoContent();
@@ -302,11 +302,11 @@ public class ProjectController : ControllerBase
     /// </summary>
     [HttpPost("{id:long}/restore")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> RestoreProject(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         _logger.LogInformation("♻️ Restoring project {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var entity = await _db.Projects
+        var entity = await _context.Projects
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(p => p.Id == id &&
                 p.IsDeleted &&
@@ -322,7 +322,7 @@ public class ProjectController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Project {Id} restored", id);
         return NoContent();

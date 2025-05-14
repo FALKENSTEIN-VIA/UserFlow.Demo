@@ -46,7 +46,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// ➕ Creates a new company.
     /// </summary>
-    public async Task<CompanyDTO> CreateCompanyAsync(CompanyCreateDTO dto)
+    public async Task<CompanyDTO> CreateAsync(CompanyCreateDTO dto)
     {
         var result = await _httpClient.PostAsync<CompanyCreateDTO, CompanyDTO>("api/companies", dto);
         if (result == null)
@@ -57,7 +57,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// ✏️ Updates an existing company.
     /// </summary>
-    public async Task<bool> UpdateCompanyAsync(long id, CompanyUpdateDTO dto)
+    public async Task<bool> UpdateAsync(long id, CompanyUpdateDTO dto)
     {
         var response = await _httpClient.PutAsync($"api/companies", dto);
         return response.IsSuccessStatusCode;
@@ -66,7 +66,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// ❌ Soft-deletes a company.
     /// </summary>
-    public async Task<bool> DeleteCompanyAsync(long id)
+    public async Task<bool> DeleteAsync(long id)
     {
         var response = await _httpClient.DeleteAsync($"api/companies/{id}");
         return response.IsSuccessStatusCode;
@@ -75,7 +75,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// ♻️ Restores a soft-deleted company.
     /// </summary>
-    public async Task<CompanyDTO?> RestoreCompanyAsync(long id)
+    public async Task<CompanyDTO?> RestoreAsync(long id)
     {
         var result = await _httpClient.PostAsync<object, CompanyDTO>($"api/companies/{id}/restore", new { });
         return result;
@@ -84,7 +84,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// 📥 Bulk creates companies.
     /// </summary>
-    public async Task<BulkOperationResultDTO<CompanyDTO>> BulkCreateCompaniesAsync(List<CompanyCreateDTO> companies)
+    public async Task<BulkOperationResultDTO<CompanyDTO>> BulkCreateAsync(List<CompanyCreateDTO> companies)
     {
         var result = await _httpClient.PostAsync<List<CompanyCreateDTO>, BulkOperationResultDTO<CompanyDTO>>("api/companies/bulk", companies)
                      ?? new();
@@ -94,7 +94,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// 📄 Gets paged companies.
     /// </summary>
-    public async Task<PagedResultDTO<CompanyDTO>> GetPagedCompaniesAsync(int page, int pageSize)
+    public async Task<PagedResultDTO<CompanyDTO>> GetPagedAsync(int page, int pageSize)
     {
         var result = await _httpClient.GetAsync<PagedResultDTO<CompanyDTO>>($"api/companies?page={page}&pageSize={pageSize}")
                      ?? new() { Items = [], Page = page, PageSize = pageSize };
@@ -104,7 +104,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// 📥 Imports companies from CSV.
     /// </summary>
-    public async Task<BulkOperationResultDTO<CompanyDTO>> ImportCompaniesAsync(IFormFile file)
+    public async Task<BulkOperationResultDTO<CompanyDTO>> ImportAsync(IFormFile file)
     {
         var content = new MultipartFormDataContent();
         var fileContent = new StreamContent(file.OpenReadStream());
@@ -134,7 +134,7 @@ public class CompanyService : ICompanyService
     /// <summary>
     /// 🏢 Registers a new company and returns AuthResponseDTO.
     /// </summary>
-    public async Task<AuthResponseDTO?> RegisterCompanyAsync(CompanyRegisterDTO dto)
+    public async Task<AuthResponseDTO?> RegisterAsync(CompanyRegisterDTO dto)
     {
         return await _httpClient.PostAsync<CompanyRegisterDTO, AuthResponseDTO>("api/companies/register", dto);
     }

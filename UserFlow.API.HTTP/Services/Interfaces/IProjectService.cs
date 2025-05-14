@@ -37,7 +37,7 @@ public interface IProjectService
     /// </summary>
     /// <param name="dto">The project creation data.</param>
     /// <returns>The newly created <see cref="ProjectDTO"/>.</returns>
-    Task<ProjectDTO> CreateProjectAsync(ProjectCreateDTO dto);
+    Task<ProjectDTO> CreateAsync(ProjectCreateDTO dto);
 
     /// <summary>
     /// ✏️ Updates an existing project.
@@ -45,28 +45,28 @@ public interface IProjectService
     /// <param name="id">The ID of the project to update.</param>
     /// <param name="dto">The updated project data.</param>
     /// <returns>True if update was successful; otherwise false.</returns>
-    Task<bool> UpdateProjectAsync(long id, ProjectUpdateDTO dto);
+    Task<bool> UpdateAsync(long id, ProjectUpdateDTO dto);
 
     /// <summary>
     /// 🗑️ Soft-deletes a project by ID.
     /// </summary>
     /// <param name="id">The ID of the project to delete.</param>
     /// <returns>True if deletion was successful; otherwise false.</returns>
-    Task<bool> DeleteProjectAsync(long id);
+    Task<bool> DeleteAsync(long id);
 
     /// <summary>
     /// ♻️ Restores a previously deleted project.
     /// </summary>
     /// <param name="id">The ID of the project to restore.</param>
     /// <returns>Restored <see cref="ProjectDTO"/> or null if not found.</returns>
-    Task<ProjectDTO?> RestoreProjectAsync(long id);
+    Task<ProjectDTO?> RestoreAsync(long id);
 
     /// <summary>
     /// 📦 Bulk creates projects from a given list.
     /// </summary>
     /// <param name="list">List of project creation DTOs.</param>
     /// <returns>A <see cref="BulkOperationResultDTO{T}"/> with import details.</returns>
-    Task<BulkOperationResultDTO<ProjectDTO>> BulkCreateProjectsAsync(List<ProjectCreateDTO> list);
+    Task<BulkOperationResultDTO<ProjectDTO>> BulkCreateAsync(List<ProjectCreateDTO> list);
 
     /// <summary>
     /// 🔢 Returns paginated projects with metadata.
@@ -81,13 +81,13 @@ public interface IProjectService
     /// </summary>
     /// <param name="file">CSV file to upload.</param>
     /// <returns>Bulk operation result with success/failure details.</returns>
-    Task<BulkOperationResultDTO<ProjectDTO>> ImportProjectsAsync(IFormFile file);
+    Task<BulkOperationResultDTO<ProjectDTO>> ImportAsync(IFormFile file);
 
     /// <summary>
     /// 📤 Exports all projects as a CSV stream.
     /// </summary>
     /// <returns>Stream containing CSV-formatted project data.</returns>
-    Task<Stream> ExportProjectsAsync();
+    Task<Stream> ExportAsync();
 }
 
 /// <remarks>

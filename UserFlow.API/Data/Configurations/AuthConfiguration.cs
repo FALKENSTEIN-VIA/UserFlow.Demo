@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace WebAPI.Configurations;
+namespace UserFlow.API.Data.Configurations;
 
 /// <summary>
 /// 👉 ✨ Provides extension methods to configure authentication and authorization services.

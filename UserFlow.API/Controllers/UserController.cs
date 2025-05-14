@@ -87,7 +87,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="includeCompany">true to include company info</param>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers([FromQuery] bool includeCompany = false)
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetAllAsync([FromQuery] bool includeCompany = false)
     {
         /// 🔍 Load full user object from database (read-only)
         var currentUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == _currentUser.UserId);
@@ -120,7 +120,7 @@ public class UserController : ControllerBase
     /// 📄 Get a single user by ID
     /// </summary>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<UserDTO>> GetUser(long id, [FromQuery] bool includeCompany = false)
+    public async Task<ActionResult<UserDTO>> GetByIdAsync(long id, [FromQuery] bool includeCompany = false)
     {
         _logger.LogInformation("📄 [GET] /api/users/{Id} requested by UserId={UserId}, includeCompany={IncludeCompany}", id, _currentUser.UserId, includeCompany);
 
@@ -148,7 +148,7 @@ public class UserController : ControllerBase
     /// ✏️ Update an existing user
     /// </summary>
     [HttpPut]
-    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO updateDto)
+    public async Task<IActionResult> UpdateAsync([FromBody] UserUpdateDTO updateDto)
     {
         _logger.LogInformation("✏️ [PUT] /api/users – Update request for ID={Id} by UserId={UserId}", updateDto.Id, _currentUser.UserId);
 
@@ -181,7 +181,7 @@ public class UserController : ControllerBase
     /// 🗑️ Soft delete user by ID
     /// </summary>
     [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteUser(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑️ [DELETE] /api/users/{Id} requested by UserId={UserId}", id, _currentUser.UserId);
 
@@ -208,7 +208,7 @@ public class UserController : ControllerBase
     /// </summary>
     [HttpPost("{id:long}/restore")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> RestoreUser(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         _logger.LogInformation("♻️ [POST] /api/users/{Id}/restore requested by UserId={UserId}", id, _currentUser.UserId);
 
@@ -240,7 +240,7 @@ public class UserController : ControllerBase
     /// </summary>
     [HttpPost("admin/create")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> CreateUserByAdmin([FromBody] CreateUserByAdminDTO dto)
+    public async Task<IActionResult> CreateByAdminAsync([FromBody] UserCreateByAdminDTO dto)
     {
         _logger.LogInformation("🆕 Admin user creation requested: Email={Email}, Role={Role}, by UserId={UserId}", dto.Email, dto.Role, _currentUser.UserId);
 
@@ -299,7 +299,7 @@ public class UserController : ControllerBase
     /// </summary>
     [HttpPost("bulk")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> BulkCreateUsers([FromBody] List<CreateUserByAdminDTO> list)
+    public async Task<IActionResult> BulkCreateAsync([FromBody] List<UserCreateByAdminDTO> list)
     {
         var currentUserId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var currentAdmin = await _userManager.FindByIdAsync(currentUserId.ToString());
@@ -373,7 +373,7 @@ public class UserController : ControllerBase
     [HttpPost("import")]
     [Authorize(Roles = "Admin")]
     [RequestSizeLimit(10 * 1024 * 1024)]
-    public async Task<IActionResult> ImportUsers(IFormFile file)
+    public async Task<IActionResult> ImportAsync(IFormFile file)
     {
         _logger.LogInformation("📥 Import requested by AdminId={AdminId}", _currentUser.UserId);
 
@@ -461,7 +461,7 @@ public class UserController : ControllerBase
     /// </summary>
     [HttpGet("export")]
     [Produces("text/csv")]
-    public async Task<IActionResult> ExportUsers([FromQuery] bool includeCompany = false)
+    public async Task<IActionResult> ExportAsync([FromQuery] bool includeCompany = false)
     {
         _logger.LogInformation("📤 Export requested by AdminId={AdminId} (includeCompany={Include})", _currentUser.UserId, includeCompany);
 

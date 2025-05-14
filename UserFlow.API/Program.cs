@@ -77,15 +77,15 @@ builder.Services.AddCors(options =>
 /// Configure Kestrel to listen on HTTP and HTTPS ports with default certificate
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(8080, listenOptions =>
-    {
-        listenOptions.UseHttps(); // HTTPS with default certificate
-    });
-    //options.ListenAnyIP(5000);
-    //options.ListenAnyIP(5001, listenOptions =>
+    //options.ListenAnyIP(8080, listenOptions =>
     //{
     //    listenOptions.UseHttps(); // HTTPS with default certificate
     //});
+    options.ListenAnyIP(5000);
+    options.ListenAnyIP(5001, listenOptions =>
+    {
+        listenOptions.UseHttps(); // HTTPS with default certificate
+    });
 });
 
 

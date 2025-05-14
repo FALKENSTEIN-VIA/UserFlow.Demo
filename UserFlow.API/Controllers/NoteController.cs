@@ -51,7 +51,7 @@ public class NoteController : ControllerBase
     /// <summary>
     /// 🗃️ EF database context
     /// </summary>
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _context;
 
     /// <summary>
     /// 👤 Service for accessing the current user context
@@ -72,7 +72,7 @@ public class NoteController : ControllerBase
     /// </summary>
     public NoteController(AppDbContext db, ICurrentUserService currentUser, ILogger<NoteController> logger)
     {
-        _db = db; // 🧱 Assign database context
+        _context = db; // 🧱 Assign database context
         _currentUser = currentUser; // 🧱 Assign user context
         _logger = logger; // 🧱 Assign logger
     }
@@ -85,11 +85,11 @@ public class NoteController : ControllerBase
     /// 📄 Returns all notes for the current company (unless GlobalAdmin).
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes()
+    public async Task<ActionResult<IEnumerable<NoteDTO>>> GetAllAsync()
     {
         _logger.LogInformation("📄 Getting all notes for user {UserId}...", _currentUser.UserId);
 
-        var query = _db.Notes.AsQueryable(); // 🔍 Start query
+        var query = _context.Notes.AsQueryable(); // 🔍 Start query
 
         if (!_currentUser.IsInRole("GlobalAdmin")) // 🔐 Restrict by company
             query = query.Where(n => n.CompanyId == _currentUser.CompanyId);
@@ -107,11 +107,11 @@ public class NoteController : ControllerBase
     /// 🔎 Retrieves a note by ID.
     /// </summary>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<NoteDTO>> GetNoteById(long id)
+    public async Task<ActionResult<NoteDTO>> GetByIdAsync(long id)
     {
         _logger.LogInformation("🔍 Getting note by ID {Id} for user {UserId}.", id, _currentUser.UserId);
 
-        var result = await _db.Notes
+        var result = await _context.Notes
             .Where(n => n.Id == id)
             .Where(n => _currentUser.IsInRole("GlobalAdmin") || n.CompanyId == _currentUser.CompanyId)
             .Select(NoteMapper.ToNoteDto())
@@ -132,7 +132,7 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<NoteDTO>> CreateNote(NoteCreateDTO dto)
+    public async Task<ActionResult<NoteDTO>> CreateAsync(NoteCreateDTO dto)
     {
         _logger.LogInformation("➕ Creating new note by user {UserId}.", _currentUser.UserId);
 
@@ -155,16 +155,16 @@ public class NoteController : ControllerBase
             CreatedBy = _currentUser.UserId // 👤 Author
         };
 
-        _db.Notes.Add(entity); // 💾 Insert entity
-        await _db.SaveChangesAsync(); // 💾 Save to DB
+        _context.Notes.Add(entity); // 💾 Insert entity
+        await _context.SaveChangesAsync(); // 💾 Save to DB
 
-        var result = await _db.Notes
+        var result = await _context.Notes
             .Where(n => n.Id == entity.Id)
             .Select(NoteMapper.ToNoteDto())
             .FirstAsync();
 
         _logger.LogInformation("✅ Note {Id} created successfully.", result.Id);
-        return CreatedAtAction(nameof(GetNoteById), new { id = result.Id }, result); // ✅ Return created
+        return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result); // ✅ Return created
     }
 
     /// <summary>
@@ -172,11 +172,11 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> UpdateNote(long id, NoteUpdateDTO dto)
+    public async Task<IActionResult> UpdateAsync(long id, NoteUpdateDTO dto)
     {
         _logger.LogInformation("✏️ Updating note {Id} by user {UserId}.", id, _currentUser.UserId);
 
-        var entity = await _db.Notes.FirstOrDefaultAsync(n =>
+        var entity = await _context.Notes.FirstOrDefaultAsync(n =>
             n.Id == id && (_currentUser.IsInRole("GlobalAdmin") || n.CompanyId == _currentUser.CompanyId));
 
         if (entity == null)
@@ -193,7 +193,7 @@ public class NoteController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow; // 🕒 Modified
         entity.UpdatedBy = _currentUser.UserId; // 👤 Modifier
 
-        await _db.SaveChangesAsync(); // 💾 Save
+        await _context.SaveChangesAsync(); // 💾 Save
 
         _logger.LogInformation("✅ Note {Id} updated successfully.", id);
         return NoContent(); // ✅ Success
@@ -204,11 +204,11 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> DeleteNote(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑️ Deleting note {Id} by user {UserId}.", id, _currentUser.UserId);
 
-        var entity = await _db.Notes.FirstOrDefaultAsync(n =>
+        var entity = await _context.Notes.FirstOrDefaultAsync(n =>
             n.Id == id && (_currentUser.IsInRole("GlobalAdmin") || n.CompanyId == _currentUser.CompanyId));
 
         if (entity == null)
@@ -221,7 +221,7 @@ public class NoteController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync(); // 💾 Save
+        await _context.SaveChangesAsync(); // 💾 Save
 
         _logger.LogInformation("✅ Note {Id} soft-deleted successfully.", id);
         return NoContent(); // ✅ Success
@@ -232,11 +232,11 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpPost("{id:long}/restore")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> RestoreNote(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         _logger.LogInformation("♻️ Restoring note {Id} by user {UserId}.", id, _currentUser.UserId);
 
-        var entity = await _db.Notes
+        var entity = await _context.Notes
             .IgnoreQueryFilters() // ❗ Bypass soft delete filter
             .FirstOrDefaultAsync(n =>
                 n.Id == id &&
@@ -253,7 +253,7 @@ public class NoteController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync(); // 💾 Save
+        await _context.SaveChangesAsync(); // 💾 Save
 
         _logger.LogInformation("✅ Note {Id} restored successfully.", id);
         return NoContent(); // ✅ Done
@@ -263,7 +263,7 @@ public class NoteController : ControllerBase
     /// 📄 Returns a paginated list of notes.
     /// </summary>
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedResultDTO<NoteDTO>>> GetPagedNotes(int page = 1, int pageSize = 20)
+    public async Task<ActionResult<PagedResultDTO<NoteDTO>>> GetPagedAsync(int page = 1, int pageSize = 20)
     {
         _logger.LogInformation("📄 Getting paged notes (Page: {Page}, PageSize: {PageSize}) for user {UserId}.",
             page, pageSize, _currentUser.UserId);
@@ -274,7 +274,7 @@ public class NoteController : ControllerBase
             return BadRequest("Invalid page or pageSize value."); // ❌ Invalid input
         }
 
-        var query = _db.Notes.AsQueryable();
+        var query = _context.Notes.AsQueryable();
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
             query = query.Where(n => n.CompanyId == _currentUser.CompanyId);
@@ -310,7 +310,7 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpPost("bulk-create")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<NoteDTO>>> BulkCreateNotes(List<NoteCreateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<NoteDTO>>> BulkCreateAsync(List<NoteCreateDTO> dtos)
     {
         _logger.LogInformation("📦 Bulk create of {Count} notes started by user {UserId}.", dtos.Count, _currentUser.UserId);
 
@@ -345,10 +345,10 @@ public class NoteController : ControllerBase
                 CreatedBy = _currentUser.UserId
             };
 
-            _db.Notes.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.Notes.Add(entity);
+            await _context.SaveChangesAsync();
 
-            var result = await _db.Notes
+            var result = await _context.Notes
                 .Where(n => n.Id == entity.Id)
                 .Select(NoteMapper.ToNoteDto())
                 .FirstAsync();
@@ -372,7 +372,7 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpPut("bulk-update")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<NoteDTO>>> BulkUpdateNotes(List<NoteUpdateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<NoteDTO>>> BulkUpdateAsync(List<NoteUpdateDTO> dtos)
     {
         _logger.LogInformation("✏️ Bulk update of {Count} notes started by user {UserId}.", dtos.Count, _currentUser.UserId);
 
@@ -387,7 +387,7 @@ public class NoteController : ControllerBase
 
         foreach (var (dto, index) in dtos.Select((x, i) => (x, i)))
         {
-            var entity = await _db.Notes.FirstOrDefaultAsync(n =>
+            var entity = await _context.Notes.FirstOrDefaultAsync(n =>
                 n.Id == dto.Id &&
                 (_currentUser.IsInRole("GlobalAdmin") || n.CompanyId == _currentUser.CompanyId));
 
@@ -406,9 +406,9 @@ public class NoteController : ControllerBase
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = _currentUser.UserId;
 
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var result = await _db.Notes
+            var result = await _context.Notes
                 .Where(n => n.Id == entity.Id)
                 .Select(NoteMapper.ToNoteDto())
                 .FirstAsync();
@@ -432,7 +432,7 @@ public class NoteController : ControllerBase
     /// </summary>
     [HttpPost("bulk-delete")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<NoteDTO>>> BulkDeleteNotes(List<long> ids)
+    public async Task<ActionResult<BulkOperationResultDTO<NoteDTO>>> BulkDeleteAsync(List<long> ids)
     {
         _logger.LogInformation("🗑️ Bulk delete for {Count} notes started by user {UserId}.", ids.Count, _currentUser.UserId);
 
@@ -447,7 +447,7 @@ public class NoteController : ControllerBase
 
         foreach (var (id, index) in ids.Select((x, i) => (x, i)))
         {
-            var entity = await _db.Notes.FirstOrDefaultAsync(n =>
+            var entity = await _context.Notes.FirstOrDefaultAsync(n =>
                 n.Id == id &&
                 (_currentUser.IsInRole("GlobalAdmin") || n.CompanyId == _currentUser.CompanyId));
 
@@ -462,9 +462,9 @@ public class NoteController : ControllerBase
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = _currentUser.UserId;
 
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var result = await _db.Notes
+            var result = await _context.Notes
                 .IgnoreQueryFilters()
                 .Where(n => n.Id == entity.Id)
                 .Select(NoteMapper.ToNoteDto())
@@ -539,8 +539,8 @@ public class NoteController : ControllerBase
                 CreatedBy = _currentUser.UserId
             };
 
-            _db.Notes.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.Notes.Add(entity);
+            await _context.SaveChangesAsync();
 
             result.ImportedCount++;
         }
@@ -562,7 +562,7 @@ public class NoteController : ControllerBase
     {
         _logger.LogInformation("📤 Exporting notes to CSV for user {UserId}.", _currentUser.UserId);
 
-        var query = _db.Notes.AsQueryable();
+        var query = _context.Notes.AsQueryable();
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
             query = query.Where(n => n.CompanyId == _currentUser.CompanyId);

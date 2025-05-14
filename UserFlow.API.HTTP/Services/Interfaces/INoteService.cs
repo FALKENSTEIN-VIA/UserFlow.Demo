@@ -37,7 +37,7 @@ public interface INoteService
     /// </summary>
     /// <param name="dto">The <see cref="NoteDTO"/> containing note data.</param>
     /// <returns>The created note as <see cref="NoteDTO"/> or null if failed.</returns>
-    Task<NoteDTO?> CreateNoteAsync(NoteDTO dto);
+    Task<NoteDTO?> CreateAsync(NoteDTO dto);
 
     /// <summary>
     /// ✏️ Updates an existing note by ID.
@@ -45,34 +45,34 @@ public interface INoteService
     /// <param name="id">The note ID to update.</param>
     /// <param name="dto">The updated note data.</param>
     /// <returns>True if update was successful, otherwise false.</returns>
-    Task<bool> UpdateNoteAsync(long id, NoteDTO dto);
+    Task<bool> UpdateAsync(long id, NoteDTO dto);
 
     /// <summary>
     /// 🗑️ Soft-deletes a note by ID.
     /// </summary>
     /// <param name="id">The ID of the note to delete.</param>
     /// <returns>True if deletion was successful, otherwise false.</returns>
-    Task<bool> DeleteNoteAsync(long id);
+    Task<bool> DeleteAsync(long id);
 
     /// <summary>
     /// ♻️ Restores a previously deleted note by ID.
     /// </summary>
     /// <param name="id">The ID of the note to restore.</param>
     /// <returns>The restored <see cref="NoteDTO"/> or null.</returns>
-    Task<NoteDTO?> RestoreNoteAsync(long id);
+    Task<NoteDTO?> RestoreAsync(long id);
 
     /// <summary>
     /// 📤 Exports all notes as a downloadable CSV file.
     /// </summary>
     /// <returns>CSV stream containing notes.</returns>
-    Task<Stream?> ExportNotesAsync();
+    Task<Stream?> ExportAsync();
 
     /// <summary>
     /// 📥 Imports notes from a CSV file.
     /// </summary>
     /// <param name="file">CSV file containing notes.</param>
     /// <returns>Bulk result of the import with success and error details.</returns>
-    Task<BulkOperationResultDTO<NoteDTO>?> ImportNotesAsync(IFormFile file);
+    Task<BulkOperationResultDTO<NoteDTO>?> ImportAsync(IFormFile file);
 }
 
 /// <remarks>

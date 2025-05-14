@@ -35,6 +35,9 @@ public static class EmployeeMapper
                 Role = employee.Role,
                 UserId = employee.UserId,
                 CompanyId = employee.CompanyId,
+                CompanyName = employee.Company != null
+                    ? employee.Company.Name
+                    : string.Empty,
                 Company = employee.Company != null
                     ? new CompanyDTO
                     {
@@ -59,6 +62,9 @@ public static class EmployeeMapper
             Role = employee.Role,
             UserId = employee.UserId,
             CompanyId = employee.CompanyId,
+            CompanyName = employee.Company != null
+                ? employee.Company.Name
+                : string.Empty,
             Company = null // ❌ Exclude nested company
         };
     }

@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using UserFlow.API.HTTP;
 using UserFlow.API.HTTP.Base;
 using UserFlow.API.HTTP.Services.Interfaces;
-using UserFlow.Maui.Client;
 using UserFlow.Maui.Client.Views;
 
 namespace UserFlow.Maui.Client.ViewModels;
@@ -53,6 +52,10 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     public async Task NavigateCompaniesAsync() =>
         await App.Navigator.PushAsync(new NavigationPage(App.Services.GetRequiredService<CompaniesPage>()));
+
+    [RelayCommand]
+    public async Task NavigateEmployeesAsync() =>
+        await App.Navigator.PushAsync(new NavigationPage(App.Services.GetRequiredService<EmployeesPage>()));
 
     [RelayCommand]
     public async Task NavigateUsersAsync() =>

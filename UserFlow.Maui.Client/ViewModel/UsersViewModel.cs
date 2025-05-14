@@ -8,7 +8,6 @@ using UserFlow.API.Http.HubServices;
 using UserFlow.API.HTTP;
 using UserFlow.API.Shared.DTO;
 using UserFlow.API.Shared.Notifications;
-using UserFlow.Maui.Client;
 
 namespace UserFlow.Maui.Client.ViewModels;
 
@@ -37,7 +36,7 @@ public partial class UsersViewModel : BaseChangeStreamsViewModel
     public async Task LoadAsync()
     {
         await RunApiAsync(
-            () => _unitOfWork.Users.GetAllUsersAsync(includeCompany: false),
+            () => _unitOfWork.Users.GetAllAsync(includeCompany: false),
             result =>
             {
                 Users = new ObservableCollection<UserDTO>((result ?? []).OrderBy(x => x.Id));
@@ -58,13 +57,13 @@ public partial class UsersViewModel : BaseChangeStreamsViewModel
         await RunApiAsync(
             async () =>
             {
-                var updateDto = new UpdateUserDTO
+                var updateDto = new UserUpdateDTO
                 {
                     Id = CurrentUser.Id,
                     Name = $"{CurrentUser.Name} (Updated {DateTime.Now:T})",
                     Email = CurrentUser.Email,
                 };
-                return await _unitOfWork.Users.UpdateUserAsync(updateDto) ? updateDto : null;
+                return await _unitOfWork.Users.UpdateAsync(updateDto) ? updateDto : null;
             },
             async updateDto =>
             {
@@ -100,7 +99,7 @@ public partial class UsersViewModel : BaseChangeStreamsViewModel
         CollectionChangeHandler.ApplyChange(
             Users,
             notification,
-            id => _unitOfWork.Users.GetUserByIdAsync(id),
+            id => _unitOfWork.Users.GetByIdAsync(id),
             user => user.Id,
             action => App.Current?.Dispatcher.Dispatch(action)
         );

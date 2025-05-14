@@ -183,7 +183,7 @@ public class EmployeeController : ControllerBase
     #region 📄 CRUD Operations
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployees(
+    public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetAllAsync(
         [FromQuery] bool includeCompany = false,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
@@ -227,7 +227,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<EmployeeDTO>> GetEmployeeById(long id, [FromQuery] bool includeCompany = false)
+    public async Task<ActionResult<EmployeeDTO>> GetByIdAsync(long id, [FromQuery] bool includeCompany = false)
     {
         _logger.LogInformation("🔎 GetEmployeeById called for Id {Id}", id);
 
@@ -263,7 +263,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateEmployee([FromBody] EmployeeCreateDTO dto)
+    public async Task<IActionResult> CreateAsync([FromBody] EmployeeCreateDTO dto)
     {
         _logger.LogInformation("➕ CreateEmployee called for Email {Email}", dto.Email);
 
@@ -298,7 +298,7 @@ public class EmployeeController : ControllerBase
         _logger.LogInformation("👤 Created employee '{Name}' ({Email}) in company {CompanyId} by user {UserId}",
             employee.Name, employee.Email, employee.CompanyId, _currentUser.UserId);
 
-        return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, result);
+        return CreatedAtAction(nameof(GetByIdAsync), new { id = employee.Id }, result);
     }
 
     #endregion
@@ -306,7 +306,7 @@ public class EmployeeController : ControllerBase
     #region ✏️ Update / 🗑️ Delete / ♻️ Restore
 
     [HttpPut]
-    public async Task<IActionResult> UpdateEmployee([FromBody] EmployeeUpdateDTO dto)
+    public async Task<IActionResult> UpdateAsync([FromBody] EmployeeUpdateDTO dto)
     {
         _logger.LogInformation("✏️ UpdateEmployee called for Id {Id}", dto.Id);
 
@@ -347,7 +347,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteEmployee(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑️ DeleteEmployee called for Id {Id}", id);
 
@@ -386,7 +386,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut("{id:long}/restore")]
-    public async Task<IActionResult> RestoreEmployee(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         _logger.LogInformation("♻️ RestoreEmployee called for Id {Id}", id);
 
@@ -432,7 +432,7 @@ public class EmployeeController : ControllerBase
     #region 📦 Bulk Create / Update / Delete
 
     [HttpPost("bulk")]
-    public async Task<IActionResult> BulkCreateEmployees([FromBody] List<EmployeeCreateDTO> list)
+    public async Task<IActionResult> BulkCreateAsync([FromBody] List<EmployeeCreateDTO> list)
     {
         _logger.LogInformation("📦 BulkCreateEmployees called with {Count} records", list.Count);
 
@@ -498,7 +498,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut("bulk")]
-    public async Task<IActionResult> BulkUpdateEmployees([FromBody] List<EmployeeUpdateDTO> list)
+    public async Task<IActionResult> BulkUpdateAsync([FromBody] List<EmployeeUpdateDTO> list)
     {
         _logger.LogInformation("✏️ BulkUpdateEmployees called with {Count} records", list.Count);
 
@@ -554,7 +554,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("bulk-delete")]
-    public async Task<IActionResult> BulkDeleteEmployees([FromBody] long[] ids)
+    public async Task<IActionResult> BulkDeleteAsync([FromBody] long[] ids)
     {
         _logger.LogInformation("🗑️ BulkDeleteEmployees called with {Count} ids", ids.Length);
 

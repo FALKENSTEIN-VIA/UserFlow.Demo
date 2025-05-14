@@ -32,6 +32,11 @@ public class Employee : BaseEntity
     public Company? Company { get; set; } = null!;
 
     /// <summary>
+    /// 🏢 Convenience property returning the associated company name (empty if null).
+    /// </summary>
+    public string? CompanyName => Company?.Name ?? string.Empty;
+
+    /// <summary>
     /// 🔗 Optional link to a system user account (Identity user).
     /// </summary>
     public long? UserId { get; set; }

@@ -33,11 +33,18 @@ public interface IEmployeeService
     Task<EmployeeDTO?> GetByIdAsync(long id);
 
     /// <summary>
+    /// 📝 Updates an employee with the given profile data.
+    /// </summary>
+    /// <param name="dto">Employee update data.</param>
+    /// <returns>True if update was successful.</returns>
+    Task<bool> UpdateAsync(EmployeeUpdateDTO dto);
+
+    /// <summary>
     /// 🔍 Retrieves employees by their company ID.
     /// </summary>
     /// <param name="id">The company's unique identifier.</param>
     /// <returns><see cref="EmployeeDTO"/> if found, otherwise null.</returns>
-    Task<IEnumerable<EmployeeDTO>> GetEmployeesByCompanyIdAsync(long companyId);
+    Task<IEnumerable<EmployeeDTO>> GetByCompanyIdAsync(long companyId);
 
     /// <summary>
     /// 🆕 Creates a new employee with the provided data.

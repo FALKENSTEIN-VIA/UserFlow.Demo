@@ -58,7 +58,7 @@ public class DashboardController : ControllerBase
     #region 📊 Statistics
 
     [HttpGet("users/count")]
-    public async Task<ActionResult<int>> GetUserCount()
+    public async Task<ActionResult<int>> GetUserCountAsync()
     {
         try
         {
@@ -94,7 +94,7 @@ public class DashboardController : ControllerBase
     }
 
     [HttpGet("projects/count")]
-    public async Task<ActionResult<int>> GetProjectCount()
+    public async Task<ActionResult<int>> GetProjectCountAsync()
     {
         try
         {
@@ -134,7 +134,7 @@ public class DashboardController : ControllerBase
     #region 🕵️ Latest Users
 
     [HttpGet("users/latest")]
-    public async Task<ActionResult<IEnumerable<UserDTO>>> GetLatestUsers([FromQuery] int count = 5)
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetLatestUsersAsync([FromQuery] int count = 5)
     {
         try
         {
@@ -177,7 +177,7 @@ public class DashboardController : ControllerBase
 
     [HttpPost("import/users")]
     [RequestSizeLimit(10 * 1024 * 1024)]
-    public async Task<ActionResult<BulkOperationResultDTO<UserDTO>>> ImportUserEmails(IFormFile file)
+    public async Task<ActionResult<BulkOperationResultDTO<UserDTO>>> ImportUsersAsync(IFormFile file)
     {
         var result = new BulkOperationResultDTO<UserDTO>();
         var rowCounter = 0;
@@ -257,7 +257,7 @@ public class DashboardController : ControllerBase
 
     [HttpGet("export/users")]
     [Produces("text/csv")]
-    public async Task<IActionResult> ExportUsers()
+    public async Task<IActionResult> ExportUsersAsync()
     {
         try
         {

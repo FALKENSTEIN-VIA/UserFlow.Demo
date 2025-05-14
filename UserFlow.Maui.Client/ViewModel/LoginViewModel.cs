@@ -7,7 +7,6 @@ using UserFlow.API.HTTP;
 using UserFlow.API.HTTP.Base;
 using UserFlow.API.HTTP.Services.Interfaces;
 using UserFlow.API.Shared.DTO;
-using UserFlow.Maui.Client;
 using UserFlow.Maui.Client.Views;
 
 namespace UserFlow.Maui.Client.ViewModels;

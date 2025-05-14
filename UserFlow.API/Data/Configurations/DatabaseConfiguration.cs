@@ -8,9 +8,8 @@
 /// Enables optional sensitive data logging for development purposes only.
 
 using Microsoft.EntityFrameworkCore;
-using UserFlow.API.Data;
 
-namespace WebAPI.Configurations;
+namespace UserFlow.API.Data.Configurations;
 
 /// <summary>
 /// 👉 ✨ Provides a method to configure the database connection for the application.

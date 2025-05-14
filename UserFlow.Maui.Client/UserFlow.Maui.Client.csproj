@@ -76,7 +76,15 @@
 		<ProjectReference Include="..\UserFlow.API.HTTP\UserFlow.API.Http.csproj" />
 	</ItemGroup> 
 	<ItemGroup>
+	  <Compile Update="Views\EmployeesPage.xaml.cs">
+	    <DependentUpon>EmployeesPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup> 
+	<ItemGroup>
 	  <MauiXaml Update="Views\CompaniesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\EmployeesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

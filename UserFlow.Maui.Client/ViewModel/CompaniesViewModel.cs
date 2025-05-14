@@ -2,12 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using UserFlow.API.ChangeStreams.Helper;
 using UserFlow.API.Http.Base;
 using UserFlow.API.Http.HubServices;
 using UserFlow.API.HTTP;
-using UserFlow.API.HTTP.Base;
 using UserFlow.API.Shared.DTO;
 using UserFlow.API.Shared.Notifications;
 
@@ -50,8 +48,8 @@ public partial class CompaniesViewModel : BaseChangeStreamsViewModel
     public async Task LoadCompaniesAsync()
     {
         await RunApiAsync(
-            () => _unitOfWork.Companies.GetAllAsync(),
-            result =>
+            call: () => _unitOfWork.Companies.GetAllAsync(),
+            onSuccess: result =>
             {
                 Companies = new ObservableCollection<CompanyDTO>((result ?? []).OrderBy(x => x.Id));
                 CurrentCompany = Companies.FirstOrDefault(x => x.Id == CurrentCompany?.Id) ?? Companies.FirstOrDefault();
@@ -72,7 +70,7 @@ public partial class CompaniesViewModel : BaseChangeStreamsViewModel
         }
 
         await RunApiAsync(
-            () => _unitOfWork.Employees.GetEmployeesByCompanyIdAsync(companyId),
+            () => _unitOfWork.Employees.GetByCompanyIdAsync(companyId),
             result =>
             {
                 Employees = new ObservableCollection<EmployeeDTO>(result ?? []);

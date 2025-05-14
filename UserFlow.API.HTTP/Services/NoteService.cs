@@ -47,28 +47,28 @@ public class NoteService : INoteService
 
 
     /// <inheritdoc/>
-    public async Task<NoteDTO?> CreateNoteAsync(NoteDTO dto)
+    public async Task<NoteDTO?> CreateAsync(NoteDTO dto)
     {
         var result = await _httpClient.PostAsync<NoteDTO, NoteDTO>("api/notes", dto);
         return result;
     }
 
     /// <inheritdoc/>
-    public async Task<bool> UpdateNoteAsync(long id, NoteDTO dto)
+    public async Task<bool> UpdateAsync(long id, NoteDTO dto)
     {
         var response = await _httpClient.PutAsync($"api/notes/{id}", dto);
         return response.IsSuccessStatusCode;
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteNoteAsync(long id)
+    public async Task<bool> DeleteAsync(long id)
     {
         var response = await _httpClient.DeleteAsync($"api/notes/{id}");
         return response.IsSuccessStatusCode;
     }
 
     /// <inheritdoc/>
-    public async Task<NoteDTO?> RestoreNoteAsync(long id)
+    public async Task<NoteDTO?> RestoreAsync(long id)
     {
         var result = await _httpClient.PostAsync<object, NoteDTO>($"api/notes/{id}/restore", new { });
         return result;
@@ -79,7 +79,7 @@ public class NoteService : INoteService
     #region 📁 Import & Export
 
     /// <inheritdoc/>
-    public async Task<Stream?> ExportNotesAsync()
+    public async Task<Stream?> ExportAsync()
     {
         var response = await _httpClient.GetRawAsync("api/notes/export");
 
@@ -92,7 +92,7 @@ public class NoteService : INoteService
     }
 
     /// <inheritdoc/>
-    public async Task<BulkOperationResultDTO<NoteDTO>?> ImportNotesAsync(IFormFile file)
+    public async Task<BulkOperationResultDTO<NoteDTO>?> ImportAsync(IFormFile file)
     {
         var content = new MultipartFormDataContent();
         var streamContent = new StreamContent(file.OpenReadStream());

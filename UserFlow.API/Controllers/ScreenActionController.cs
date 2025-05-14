@@ -40,7 +40,7 @@ public class ScreenActionController : ControllerBase
 {
     #region 🔒 Private Fields
 
-    private readonly AppDbContext _db; // 🗃️ EF Core database context
+    private readonly AppDbContext _context; // 🗃️ EF Core database context
     private readonly ICurrentUserService _currentUser; // 👤 Current user context
     private readonly ILogger<ScreenActionController> _logger; // 📝 Logger instance
 
@@ -53,7 +53,7 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     public ScreenActionController(AppDbContext db, ICurrentUserService currentUser, ILogger<ScreenActionController> logger)
     {
-        _db = db; // 💉 Injected DB context
+        _context = db; // 💉 Injected DB context
         _currentUser = currentUser; // 💉 Injected user context
         _logger = logger; // 💉 Injected logger
     }
@@ -66,11 +66,11 @@ public class ScreenActionController : ControllerBase
     /// 🔍 Retrieves all screen actions for current company.
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ScreenActionDTO>>> GetScreenActions()
+    public async Task<ActionResult<IEnumerable<ScreenActionDTO>>> GetAllAsync()
     {
         _logger.LogInformation("📄 Fetching all screen actions for user {UserId}", _currentUser.UserId);
 
-        var query = _db.ScreenActions.AsQueryable();
+        var query = _context.ScreenActions.AsQueryable();
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
             query = query.Where(a => a.CompanyId == _currentUser.CompanyId);
@@ -89,11 +89,11 @@ public class ScreenActionController : ControllerBase
     /// 🔍 Retrieves single screen action by ID with company access check.
     /// </summary>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<ScreenActionDTO>> GetScreenActionById(long id)
+    public async Task<ActionResult<ScreenActionDTO>> GetByIdAsync(long id)
     {
         _logger.LogInformation("🔎 Getting screen action {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var result = await _db.ScreenActions
+        var result = await _context.ScreenActions
             .Where(a => a.Id == id)
             .Where(a => _currentUser.IsInRole("GlobalAdmin") || a.CompanyId == _currentUser.CompanyId)
             .Select(ScreenActionMapper.ToScreenActionDto())
@@ -113,7 +113,7 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<ScreenActionDTO>> CreateScreenAction(ScreenActionCreateDTO dto)
+    public async Task<ActionResult<ScreenActionDTO>> CreateAsync(ScreenActionCreateDTO dto)
     {
         _logger.LogInformation("➕ Creating screen action by user {UserId}", _currentUser.UserId);
 
@@ -131,17 +131,17 @@ public class ScreenActionController : ControllerBase
             CreatedAt = DateTime.UtcNow
         };
 
-        _db.ScreenActions.Add(entity);
-        await _db.SaveChangesAsync();
+        _context.ScreenActions.Add(entity);
+        await _context.SaveChangesAsync();
 
-        var result = await _db.ScreenActions
+        var result = await _context.ScreenActions
             .Where(a => a.Id == entity.Id)
             .Select(ScreenActionMapper.ToScreenActionDto())
             .FirstAsync();
 
         _logger.LogInformation("✅ Created ScreenAction {Id}", result.Id);
 
-        return CreatedAtAction(nameof(GetScreenActionById), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result);
     }
 
     /// <summary>
@@ -149,11 +149,11 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> UpdateScreenAction(long id, ScreenActionUpdateDTO dto)
+    public async Task<IActionResult> UpdateAsync(long id, ScreenActionUpdateDTO dto)
     {
         _logger.LogInformation("✏️ Updating screen action {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var entity = await _db.ScreenActions.FirstOrDefaultAsync(a =>
+        var entity = await _context.ScreenActions.FirstOrDefaultAsync(a =>
             a.Id == id && (_currentUser.IsInRole("GlobalAdmin") || a.CompanyId == _currentUser.CompanyId));
 
         if (entity == null)
@@ -166,7 +166,7 @@ public class ScreenActionController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Updated ScreenAction {Id}", id);
 
@@ -178,11 +178,11 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> DeleteScreenAction(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑️ Deleting screen action {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var entity = await _db.ScreenActions.FirstOrDefaultAsync(a =>
+        var entity = await _context.ScreenActions.FirstOrDefaultAsync(a =>
             a.Id == id && (_currentUser.IsInRole("GlobalAdmin") || a.CompanyId == _currentUser.CompanyId));
 
         if (entity == null)
@@ -195,7 +195,7 @@ public class ScreenActionController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Soft-deleted ScreenAction {Id}", id);
 
@@ -207,11 +207,11 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPost("{id:long}/restore")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> RestoreScreenAction(long id)
+    public async Task<IActionResult> RestoreAsync(long id)
     {
         _logger.LogInformation("♻️ Restoring screen action {Id} by user {UserId}", id, _currentUser.UserId);
 
-        var entity = await _db.ScreenActions
+        var entity = await _context.ScreenActions
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(a =>
                 a.Id == id &&
@@ -228,7 +228,7 @@ public class ScreenActionController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Restored ScreenAction {Id}", id);
 
@@ -256,7 +256,7 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPost("bulk-create")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> BulkCreateScreenActions(List<ScreenActionCreateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> BulkCreateAsync(List<ScreenActionCreateDTO> dtos)
     {
         _logger.LogInformation("📦 Bulk creation started by user {UserId} with {Count} records", _currentUser.UserId, dtos.Count);
 
@@ -285,10 +285,10 @@ public class ScreenActionController : ControllerBase
                 CreatedAt = DateTime.UtcNow
             };
 
-            _db.ScreenActions.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.ScreenActions.Add(entity);
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.ScreenActions
+            var dtoResult = await _context.ScreenActions
                 .Where(a => a.Id == entity.Id)
                 .Select(ScreenActionMapper.ToScreenActionDto())
                 .FirstAsync();
@@ -308,7 +308,7 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPut("bulk-update")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> BulkUpdateScreenActions(List<ScreenActionUpdateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> BulkUpdateAsync(List<ScreenActionUpdateDTO> dtos)
     {
         _logger.LogInformation("✏️ Bulk update started by user {UserId} with {Count} records", _currentUser.UserId, dtos.Count);
 
@@ -322,7 +322,7 @@ public class ScreenActionController : ControllerBase
 
         foreach (var (dto, index) in dtos.Select((x, i) => (x, i)))
         {
-            var entity = await _db.ScreenActions
+            var entity = await _context.ScreenActions
                 .FirstOrDefaultAsync(a => a.Id == dto.Id &&
                     (_currentUser.IsInRole("GlobalAdmin") || a.CompanyId == _currentUser.CompanyId));
 
@@ -337,9 +337,9 @@ public class ScreenActionController : ControllerBase
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = _currentUser.UserId;
 
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.ScreenActions
+            var dtoResult = await _context.ScreenActions
                 .Where(a => a.Id == entity.Id)
                 .Select(ScreenActionMapper.ToScreenActionDto())
                 .FirstAsync();
@@ -359,7 +359,7 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPost("bulk-delete")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> BulkDeleteScreenActions(List<long> ids)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> BulkDeleteAsync(List<long> ids)
     {
         _logger.LogInformation("🗑️ Bulk delete started by user {UserId} with {Count} IDs", _currentUser.UserId, ids.Count);
 
@@ -373,7 +373,7 @@ public class ScreenActionController : ControllerBase
 
         foreach (var (id, index) in ids.Select((x, i) => (x, i)))
         {
-            var entity = await _db.ScreenActions
+            var entity = await _context.ScreenActions
                 .FirstOrDefaultAsync(a => a.Id == id &&
                     (_currentUser.IsInRole("GlobalAdmin") || a.CompanyId == _currentUser.CompanyId));
 
@@ -388,9 +388,9 @@ public class ScreenActionController : ControllerBase
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = _currentUser.UserId;
 
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.ScreenActions
+            var dtoResult = await _context.ScreenActions
                 .IgnoreQueryFilters()
                 .Where(a => a.Id == entity.Id)
                 .Select(ScreenActionMapper.ToScreenActionDto())
@@ -415,7 +415,7 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpPost("import")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> ImportScreenActions(IFormFile file)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionDTO>>> ImportAsync(IFormFile file)
     {
         _logger.LogInformation("📥 Importing screen actions from CSV by user {UserId}", _currentUser.UserId);
 
@@ -456,8 +456,8 @@ public class ScreenActionController : ControllerBase
                 CreatedAt = DateTime.UtcNow
             };
 
-            _db.ScreenActions.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.ScreenActions.Add(entity);
+            await _context.SaveChangesAsync();
 
             result.ImportedCount++;
         }
@@ -475,11 +475,11 @@ public class ScreenActionController : ControllerBase
     /// </summary>
     [HttpGet("export")]
     [Authorize(Roles = "Admin,GlobalAdmin")]
-    public async Task<IActionResult> ExportScreenActionsAsCsv()
+    public async Task<IActionResult> ExportAsync()
     {
         _logger.LogInformation("📤 Exporting screen actions to CSV by user {UserId}", _currentUser.UserId);
 
-        var query = _db.ScreenActions.AsQueryable();
+        var query = _context.ScreenActions.AsQueryable();
 
         if (!_currentUser.IsInRole("GlobalAdmin"))
             query = query.Where(a => a.CompanyId == _currentUser.CompanyId);

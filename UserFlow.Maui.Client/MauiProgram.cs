@@ -120,6 +120,8 @@ public static class MauiProgram
         builder.Services.AddTransient<HomePage>();
         builder.Services.AddTransient<CompaniesViewModel>();
         builder.Services.AddTransient<CompaniesPage>();
+        builder.Services.AddTransient<EmployeesViewModel>();
+        builder.Services.AddTransient<EmployeesPage>();
         builder.Services.AddTransient<UsersViewModel>();
         builder.Services.AddTransient<UsersPage>();
         builder.Services.AddTransient<CreateUserViewModel>();

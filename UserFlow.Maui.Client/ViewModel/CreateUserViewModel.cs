@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using UserFlow.API.HTTP;
 using UserFlow.API.HTTP.Base;
 using UserFlow.API.Shared.DTO;
-using UserFlow.Maui.Client.ViewModels;
 
 namespace UserFlow.Maui.Client.ViewModels;
 
@@ -80,23 +79,23 @@ public partial class CreateUserViewModel : BaseViewModel
             loadingMessage: "🔄 Creating user...");
     }
 
-    private async Task<CreateUserByAdminDTO?> ExecuteCreateUserAsync()
+    private async Task<UserCreateByAdminDTO?> ExecuteCreateUserAsync()
     {
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Role))
             return null;
 
-        var dto = new CreateUserByAdminDTO
+        var dto = new UserCreateByAdminDTO
         {
             Email = Email,
             Name = Name,
             Role = Role
         };
 
-        var result = await _unitOfWork.Users.CreateUserByAdminAsync(dto);
+        var result = await _unitOfWork.Users.CreateByAdminAsync(dto);
         return result ? dto : null;
     }
 
-    private async Task HandleCreateUserSuccessAsync(CreateUserByAdminDTO? dto)
+    private async Task HandleCreateUserSuccessAsync(UserCreateByAdminDTO? dto)
     {
         await App.CurrentPage.DisplayAlert("✅ Success", "User has been created. They can now set their password.", "OK");
         await App.Navigator.PopAsync();

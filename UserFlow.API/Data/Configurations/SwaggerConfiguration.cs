@@ -9,7 +9,7 @@
 
 using Microsoft.OpenApi.Models;
 
-namespace WebAPI.Configurations;
+namespace UserFlow.API.Data.Configurations;
 
 /// <summary>
 /// 👉 ✨ Provides a method to configure Swagger for the API documentation.

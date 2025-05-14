@@ -30,7 +30,7 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<UserDTO>> GetAllUsersAsync(bool includeCompany = false)
+    public async Task<IEnumerable<UserDTO>> GetAllAsync(bool includeCompany = false)
     {
         string url = includeCompany ? $"api/users?includeCompany=true" : $"api/users";
         var result = await _httpClient.GetAsync<List<UserDTO>>(url);
@@ -38,7 +38,7 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc/>
-    public async Task<UserDTO?> GetUserByIdAsync(long id, bool includeCompany = false)
+    public async Task<UserDTO?> GetByIdAsync(long id, bool includeCompany = false)
     {
         string url = includeCompany ? $"api/users/{id}?includeCompany=true" : $"api/users/{id}";
         var result = await _httpClient.GetAsync<UserDTO>(url);
@@ -46,14 +46,14 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> UpdateUserAsync(UpdateUserDTO dto)
+    public async Task<bool> UpdateAsync(UserUpdateDTO dto)
     {
         var response = await _httpClient.PutAsync("api/users", dto);
         return response.IsSuccessStatusCode;
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteUserAsync(long id)
+    public async Task<bool> DeleteAsync(long id)
     {
         var response = await _httpClient.DeleteAsync($"api/users/{id}");
         return response.IsSuccessStatusCode;
@@ -67,7 +67,7 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> CreateUserByAdminAsync(CreateUserByAdminDTO dto)
+    public async Task<bool> CreateByAdminAsync(UserCreateByAdminDTO dto)
     {
         var allowedRoles = new[] { "User", "Manager", "Admin" };
 
@@ -81,7 +81,7 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc/>
-    public async Task<BulkOperationResultDTO<UserDTO>> BulkCreateUsersAsync(List<CreateUserByAdminDTO> dtos)
+    public async Task<BulkOperationResultDTO<UserDTO>> BulkCreateAsync(List<UserCreateByAdminDTO> dtos)
     {
         var allowedRoles = new[] { "User", "Manager", "Admin" };
 
@@ -114,13 +114,13 @@ public class UserService : IUserService
             };
         }
 
-        var response = await _httpClient.PostAsync<List<CreateUserByAdminDTO>, BulkOperationResultDTO<UserDTO>>("api/users/bulk", dtos);
+        var response = await _httpClient.PostAsync<List<UserCreateByAdminDTO>, BulkOperationResultDTO<UserDTO>>("api/users/bulk", dtos);
 
         return response ?? new();
     }
 
     /// <inheritdoc/>
-    public async Task<BulkOperationResultDTO<UserDTO>> ImportUsersAsync(IFormFile file)
+    public async Task<BulkOperationResultDTO<UserDTO>> ImportAsync(IFormFile file)
     {
         var content = new MultipartFormDataContent();
         var streamContent = new StreamContent(file.OpenReadStream());
@@ -133,7 +133,7 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc/>
-    public async Task<byte[]> ExportUsersCsvAsync()
+    public async Task<byte[]> ExportAsync()
     {
         var response = await _httpClient.GetRawAsync("api/users/export");
 

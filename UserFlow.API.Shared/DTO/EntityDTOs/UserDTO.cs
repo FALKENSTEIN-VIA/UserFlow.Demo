@@ -63,12 +63,12 @@ public class UserDTO : BaseDTO
 
 #endregion
 
-#region 🆕 CreateUserByAdminDTO
+#region 🆕 UserCreateByAdminDTO
 
 /// <summary>
 /// 🆕 DTO used by an admin to create a new user manually.
 /// </summary>
-public class CreateUserByAdminDTO
+public class UserCreateByAdminDTO
 {
     /// <summary>
     /// 🧑 Full name of the new user.
@@ -88,12 +88,12 @@ public class CreateUserByAdminDTO
 
 #endregion
 
-#region ✏️ UpdateUserDTO
+#region ✏️ UserUpdateDTO
 
 /// <summary>
 /// ✏️ DTO used to update user information.
 /// </summary>
-public class UpdateUserDTO
+public class UserUpdateDTO
 {
     /// <summary>
     /// 🔑 ID of the user to update.

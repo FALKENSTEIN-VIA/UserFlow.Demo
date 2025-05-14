@@ -5,16 +5,16 @@
 /// @brief API Controller for managing ScreenActionTypes with import/export and bulk operations
 /// @details Handles CRUD operations, bulk processing, and data import/export functionality for ScreenActionType entities.
 /// @endpoints
-/// - GET /api/screen-action-types
-/// - GET /api/screen-action-types/{id}
-/// - POST /api/screen-action-types
-/// - PUT /api/screen-action-types/{id}
-/// - DELETE /api/screen-action-types/{id}
-/// - POST /api/screen-action-types/bulk-create
-/// - PUT /api/screen-action-types/bulk-update
-/// - POST /api/screen-action-types/bulk-delete
-/// - POST /api/screen-action-types/import
-/// - GET /api/screen-action-types/export
+/// - GET /api/screenactiontypes
+/// - GET /api/screenactiontypes/{id}
+/// - POST /api/screenactiontypes
+/// - PUT /api/screenactiontypes/{id}
+/// - DELETE /api/screenactiontypes/{id}
+/// - POST /api/screenactiontypes/bulk-create
+/// - PUT /api/screenactiontypes/bulk-update
+/// - POST /api/screenactiontypes/bulk-delete
+/// - POST /api/screenactiontypes/import
+/// - GET /api/screenactiontypes/export
 
 using CsvHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -32,13 +32,13 @@ using UserFlow.API.Shared.DTO.ImportMaps;
 namespace UserFlow.API.Controllers;
 
 [ApiController]
-[Route("api/screen-action-types")]
+[Route("api/screenactiontypes")]
 [Authorize(Roles = "Admin,GlobalAdmin")]
 public class ScreenActionTypeController : ControllerBase
 {
     #region 🔒 Private Fields
 
-    private readonly AppDbContext _db; // 🗃️ Database context
+    private readonly AppDbContext _context; // 🗃️ Database context
     private readonly ICurrentUserService _currentUser; // 👤 User context
     private readonly ILogger<ScreenActionTypeController> _logger; // 📝 Logger
 
@@ -51,7 +51,7 @@ public class ScreenActionTypeController : ControllerBase
     /// </summary>
     public ScreenActionTypeController(AppDbContext db, ICurrentUserService currentUser, ILogger<ScreenActionTypeController> logger)
     {
-        _db = db;
+        _context = db;
         _currentUser = currentUser;
         _logger = logger;
     }
@@ -64,11 +64,11 @@ public class ScreenActionTypeController : ControllerBase
     /// 🔍 Retrieves all screen action types.
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ScreenActionTypeDTO>>> GetScreenActionTypes()
+    public async Task<ActionResult<IEnumerable<ScreenActionTypeDTO>>> GetAllAsync()
     {
         _logger.LogInformation("📄 Retrieved all screen action types by user {UserId}", _currentUser.UserId);
 
-        var result = await _db.ScreenActionTypes
+        var result = await _context.ScreenActionTypes
             .OrderBy(t => t.Name)
             .Select(ScreenActionTypeMapper.ToScreenActionTypeDto())
             .ToListAsync();
@@ -80,11 +80,11 @@ public class ScreenActionTypeController : ControllerBase
     /// 🔍 Retrieves a single screen action type by ID.
     /// </summary>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<ScreenActionTypeDTO>> GetScreenActionTypeById(long id)
+    public async Task<ActionResult<ScreenActionTypeDTO>> GetByIdAsync(long id)
     {
-        _logger.LogInformation("🔎 Requested screen action type {Id} by user {UserId}", id, _currentUser.UserId);
+        _logger.LogInformation("🔎 Requested screen action type {Id} by Id {Id}", id, id);
 
-        var result = await _db.ScreenActionTypes
+        var result = await _context.ScreenActionTypes
             .Where(t => t.Id == id)
             .Select(ScreenActionTypeMapper.ToScreenActionTypeDto())
             .FirstOrDefaultAsync();
@@ -102,7 +102,7 @@ public class ScreenActionTypeController : ControllerBase
     /// ➕ Creates a new screen action type.
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<ScreenActionTypeDTO>> CreateScreenActionType(ScreenActionTypeCreateDTO dto)
+    public async Task<ActionResult<ScreenActionTypeDTO>> CreateAsync(ScreenActionTypeCreateDTO dto)
     {
         _logger.LogInformation("➕ Creating screen action type '{Name}'", dto.Name);
 
@@ -114,28 +114,28 @@ public class ScreenActionTypeController : ControllerBase
             CreatedBy = _currentUser.UserId
         };
 
-        _db.ScreenActionTypes.Add(entity);
-        await _db.SaveChangesAsync();
+        _context.ScreenActionTypes.Add(entity);
+        await _context.SaveChangesAsync();
 
-        var result = await _db.ScreenActionTypes
+        var result = await _context.ScreenActionTypes
             .Where(t => t.Id == entity.Id)
             .Select(ScreenActionTypeMapper.ToScreenActionTypeDto())
             .FirstAsync();
 
         _logger.LogInformation("✅ Created screen action type '{Name}' (ID: {Id})", entity.Name, entity.Id);
 
-        return CreatedAtAction(nameof(GetScreenActionTypeById), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result);
     }
 
     /// <summary>
     /// ✏️ Updates an existing screen action type.
     /// </summary>
     [HttpPut("{id:long}")]
-    public async Task<IActionResult> UpdateScreenActionType(long id, ScreenActionTypeUpdateDTO dto)
+    public async Task<IActionResult> UpdateAsync(long id, ScreenActionTypeUpdateDTO dto)
     {
         _logger.LogInformation("✏️ Updating screen action type {Id}", id);
 
-        var entity = await _db.ScreenActionTypes.FirstOrDefaultAsync(t => t.Id == id);
+        var entity = await _context.ScreenActionTypes.FirstOrDefaultAsync(t => t.Id == id);
         if (entity == null)
         {
             _logger.LogWarning("❌ Screen action type {Id} not found for update", id);
@@ -147,7 +147,7 @@ public class ScreenActionTypeController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Updated screen action type {Id}", id);
 
@@ -158,11 +158,11 @@ public class ScreenActionTypeController : ControllerBase
     /// 🗑️ Soft deletes a screen action type.
     /// </summary>
     [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteScreenActionType(long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
         _logger.LogInformation("🗑️ Deleting screen action type {Id}", id);
 
-        var entity = await _db.ScreenActionTypes.FirstOrDefaultAsync(t => t.Id == id);
+        var entity = await _context.ScreenActionTypes.FirstOrDefaultAsync(t => t.Id == id);
         if (entity == null)
         {
             _logger.LogWarning("❌ Screen action type {Id} not found for deletion", id);
@@ -173,12 +173,37 @@ public class ScreenActionTypeController : ControllerBase
         entity.UpdatedAt = DateTime.UtcNow;
         entity.UpdatedBy = _currentUser.UserId;
 
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("✅ Deleted screen action type {Id}", id);
 
         return NoContent();
     }
+
+    [HttpPut("{id:long}/restore")]
+    public async Task<IActionResult> RestoreAsync(long id)
+    {
+        try
+        {
+            var sat = await _context.ScreenActionTypes.IgnoreQueryFilters().FirstOrDefaultAsync(c => c.Id == id);
+            if (sat == null)
+                return NotFound();
+
+            sat.IsDeleted = false;
+            sat.UpdatedAt = DateTime.UtcNow;
+            sat.UpdatedBy = _currentUser.UserId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "✅ ScreenActionType restored." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Error restoring ScreenActionType {Id}", id);
+            throw;
+        }
+    }
+
 
     #endregion
 
@@ -188,7 +213,7 @@ public class ScreenActionTypeController : ControllerBase
     /// 🚀 Bulk creates multiple screen action types.
     /// </summary>
     [HttpPost("bulk-create")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionTypeDTO>>> BulkCreateTypes(List<ScreenActionTypeCreateDTO> dtos)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionTypeDTO>>> BulkCreateAsync(List<ScreenActionTypeCreateDTO> dtos)
     {
         _logger.LogInformation("📦 Bulk creating {Count} screen action types", dtos.Count);
 
@@ -211,10 +236,10 @@ public class ScreenActionTypeController : ControllerBase
                 CreatedBy = _currentUser.UserId
             };
 
-            _db.ScreenActionTypes.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.ScreenActionTypes.Add(entity);
+            await _context.SaveChangesAsync();
 
-            var dtoResult = await _db.ScreenActionTypes
+            var dtoResult = await _context.ScreenActionTypes
                 .Where(t => t.Id == entity.Id)
                 .Select(ScreenActionTypeMapper.ToScreenActionTypeDto())
                 .FirstAsync();
@@ -236,7 +261,7 @@ public class ScreenActionTypeController : ControllerBase
     /// 📥 Imports screen action types from CSV file.
     /// </summary>
     [HttpPost("import")]
-    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionTypeDTO>>> ImportTypes(IFormFile file)
+    public async Task<ActionResult<BulkOperationResultDTO<ScreenActionTypeDTO>>> ImportAsync(IFormFile file)
     {
         _logger.LogInformation("📥 Importing screen action types via CSV");
 
@@ -270,8 +295,8 @@ public class ScreenActionTypeController : ControllerBase
                 CreatedBy = _currentUser.UserId
             };
 
-            _db.ScreenActionTypes.Add(entity);
-            await _db.SaveChangesAsync();
+            _context.ScreenActionTypes.Add(entity);
+            await _context.SaveChangesAsync();
 
             result.ImportedCount++;
         }
@@ -286,11 +311,11 @@ public class ScreenActionTypeController : ControllerBase
     /// 📤 Exports screen action types as CSV file.
     /// </summary>
     [HttpGet("export")]
-    public async Task<IActionResult> ExportTypesAsCsv()
+    public async Task<IActionResult> ExportAsync()
     {
         _logger.LogInformation("📤 Exporting screen action types to CSV");
 
-        var items = await _db.ScreenActionTypes
+        var items = await _context.ScreenActionTypes
             .OrderBy(t => t.Name)
             .Select(ScreenActionTypeMapper.ToScreenActionTypeDto())
             .ToListAsync();
@@ -332,19 +357,19 @@ public class ScreenActionTypeController : ControllerBase
 ///// @brief API Controller for managing ScreenActionTypes with import/export and bulk operations
 ///// @details Handles CRUD operations, bulk processing, and data import/export functionality for ScreenActionType entities.
 ///// @endpoints
-///// - GET /api/screen-action-types → Get all screen action types
-///// - GET /api/screen-action-types/{id} → Get single type by ID
-///// - POST /api/screen-action-types → Create new type
-///// - PUT /api/screen-action-types/{id} → Update existing type
-///// - DELETE /api/screen-action-types/{id} → Soft delete type
-///// - POST /api/screen-action-types/bulk-create → Bulk create types
-///// - PUT /api/screen-action-types/bulk-update → Bulk update types
-///// - POST /api/screen-action-types/bulk-delete → Bulk delete types
-///// - POST /api/screen-action-types/import → Import types from CSV
-///// - GET /api/screen-action-types/export → Export types as CSV
+///// - GET /api/screenactiontypes → Get all screen action types
+///// - GET /api/screenactiontypes/{id} → Get single type by ID
+///// - POST /api/screenactiontypes → Create new type
+///// - PUT /api/screenactiontypes/{id} → Update existing type
+///// - DELETE /api/screenactiontypes/{id} → Soft delete type
+///// - POST /api/screenactiontypes/bulk-create → Bulk create types
+///// - PUT /api/screenactiontypes/bulk-update → Bulk update types
+///// - POST /api/screenactiontypes/bulk-delete → Bulk delete types
+///// - POST /api/screenactiontypes/import → Import types from CSV
+///// - GET /api/screenactiontypes/export → Export types as CSV
 
 //[ApiController]
-//[Route("api/screen-action-types")]
+//[Route("api/screenactiontypes")]
 //[Authorize(Roles = "Admin,GlobalAdmin")]
 //public class ScreenActionTypeController : ControllerBase
 //{

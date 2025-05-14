@@ -46,7 +46,7 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public async Task<ProjectDTO> CreateProjectAsync(ProjectCreateDTO dto)
+    public async Task<ProjectDTO> CreateAsync(ProjectCreateDTO dto)
     {
         var result = await _httpClient.PostAsync<ProjectCreateDTO, ProjectDTO>("api/projects", dto);
         if (result == null)
@@ -57,21 +57,21 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> UpdateProjectAsync(long id, ProjectUpdateDTO dto)
+    public async Task<bool> UpdateAsync(long id, ProjectUpdateDTO dto)
     {
         var response = await _httpClient.PutAsync($"api/projects/{id}", dto);
         return response.IsSuccessStatusCode;
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteProjectAsync(long id)
+    public async Task<bool> DeleteAsync(long id)
     {
         var response = await _httpClient.DeleteAsync($"api/projects/{id}");
         return response.IsSuccessStatusCode;
     }
 
     /// <inheritdoc/>
-    public async Task<ProjectDTO?> RestoreProjectAsync(long id)
+    public async Task<ProjectDTO?> RestoreAsync(long id)
     {
         var result = await _httpClient.PostAsync<object, ProjectDTO>($"api/projects/{id}/restore", new { });
         return result;
@@ -82,7 +82,7 @@ public class ProjectService : IProjectService
     #region 📦 Bulk Operations
 
     /// <inheritdoc/>
-    public async Task<BulkOperationResultDTO<ProjectDTO>> BulkCreateProjectsAsync(List<ProjectCreateDTO> list)
+    public async Task<BulkOperationResultDTO<ProjectDTO>> BulkCreateAsync(List<ProjectCreateDTO> list)
     {
         var result = await _httpClient.PostAsync<List<ProjectCreateDTO>, BulkOperationResultDTO<ProjectDTO>>("api/projects/bulk", list)
                      ?? new();
@@ -107,7 +107,7 @@ public class ProjectService : IProjectService
     #region 📁 Import & Export
 
     /// <inheritdoc/>
-    public async Task<BulkOperationResultDTO<ProjectDTO>> ImportProjectsAsync(IFormFile file)
+    public async Task<BulkOperationResultDTO<ProjectDTO>> ImportAsync(IFormFile file)
     {
         var content = new MultipartFormDataContent();
         var fileContent = new StreamContent(file.OpenReadStream());
@@ -125,7 +125,7 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public async Task<Stream> ExportProjectsAsync()
+    public async Task<Stream> ExportAsync()
     {
         var response = await _httpClient.GetRawAsync("api/projects/export");
 
